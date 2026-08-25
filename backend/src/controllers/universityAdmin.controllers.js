@@ -268,4 +268,146 @@ const registerCanteenAdmin = asyncHandler(async (req, res) => {
   return res.status(201).json(new apiResponse(201, response, "Admin registered successfully"));
 });
 
-export { requestOtp, registerUniAdmin, loginUniAdmin, registerCanteenAdmin };
+// Upload Students Data CSV OR SLSX File
+
+const REQUIRED_COLUMNS = ["fullName", "registrationNo", "email", "cnic", "session", "department"];
+
+const BATCH_SIZE = 1000;
+
+const validateCNIC = cnic => {
+  return /^\d{5}-\d{7}-\d$/.test(cnic) || /^\d{13}$/.test(cnic);
+};
+
+export const uploadStudents = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw new apiError(400, "File is required");
+  }
+
+  const universityId = req.user.universityId;
+
+  let rows = [];
+
+  const extension = req.file.originalname.split(".").pop().toLowerCase();
+  // CSV
+  if (extension === "csv") {
+    await new Promise((resolve, reject) => {
+      Readable.from(req.file.buffer)
+        .pipe(csv())
+        .on("data", data => rows.push(data))
+        .on("end", resolve)
+        .on("error", reject);
+    });
+  }
+  // Excel
+  else {
+    const workbook = XLSX.read(req.file.buffer, {
+      type: "buffer",
+    });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    rows = XLSX.utils.sheet_to_json(sheet, {
+      defval: "",
+    });
+  }
+
+  if (!rows.length) {
+    throw new apiError(400, "File contains no data");
+  }
+
+  // Column validation
+  const columns = Object.keys(rows[0]);
+  const missingColumns = REQUIRED_COLUMNS.filter(col => !columns.includes(col));
+  if (missingColumns.length) {
+    throw new apiError(400, `Missing columns: ${missingColumns.join(", ")}`);
+  }
+  const errors = [];
+
+  // Map removes duplicate rows
+  const studentMap = new Map();
+  rows.forEach((row, index) => {
+    const rowNumber = index + 2;
+    const email = row.email.toString().trim().toLowerCase();
+    const cnic = row.cnic.toString().trim().replace(/\s/g, "");
+    const registrationNo = row.registrationNo.toString().trim().toLowerCase();
+    if (!row.fullName || !registrationNo || !email || !cnic || !row.session || !row.department) {
+      errors.push({
+        row: rowNumber,
+        reason: "Missing required fields",
+      });
+      return;
+    }
+
+    if (!validator.isEmail(email)) {
+      errors.push({
+        row: rowNumber,
+        reason: "Invalid email",
+      });
+      return;
+    }
+
+    if (!validateCNIC(cnic)) {
+      errors.push({
+        row: rowNumber,
+        reason: "Invalid CNIC",
+      });
+      return;
+    }
+
+    const student = {
+      universityId,
+      name: row.fullName.toString().trim().replace(/\s+/g, " "),
+      registrationNo,
+      email,
+      cnic,
+      session: row.session.toString().trim(),
+      department: row.department.toString().trim(),
+      role: "Student",
+    };
+
+    // duplicate inside file overwrites
+
+    studentMap.set(`${registrationNo}`, student);
+  });
+  const students = Array.from(studentMap.values());
+  let inserted = 0;
+  let updated = 0;
+
+  // Batch upsert
+
+  for (let i = 0; i < students.length; i += BATCH_SIZE) {
+    const batch = students.slice(i, i + BATCH_SIZE);
+    const result = await UploadedStudent.bulkWrite(
+      batch.map(student => ({
+        updateOne: {
+          filter: {
+            universityId,
+            registrationNo: student.registrationNo,
+          },
+          update: {
+            $set: student,
+          },
+          upsert: true,
+        },
+      }))
+    );
+
+    inserted += result.upsertedCount;
+    updated += result.modifiedCount;
+  }
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        totalRows: rows.length,
+        processed: students.length,
+        inserted,
+        updated,
+        failed: errors.length,
+        errors,
+      },
+
+      "Students imported successfully"
+    )
+  );
+});
+export { requestOtp, registerUniAdmin, loginUniAdmin, registerCanteenAdmin, uploadStudents };
