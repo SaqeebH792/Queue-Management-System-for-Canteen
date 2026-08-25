@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
-import { UniversityAdmin } from "../models/user.model.js";
+import { UniversityAdmin, canteenAdmin } from "../models/admins.model.js";
 import { Otp } from "../models/otp.model.js";
 import { University } from "../models/university.model.js";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
@@ -218,4 +218,54 @@ const loginUniAdmin = asyncHandler(async (req, res, next) => {
     .json(new apiResponse(200, { user: response }, "Login Successful"));
 });
 
-export { requestOtp, registerUniAdmin, loginUniAdmin };
+// Canteen Admin Registration ---------------> By University Admin
+
+const registerCanteenAdmin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new apiError(400, "All fields are required");
+  }
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) {
+    throw new apiError(400, "All fields are required");
+  }
+  if (!validator.isEmail(normalizedEmail)) {
+    throw new apiError(400, "Invalid email address");
+  }
+
+  if (
+    !validator.isStrongPassword(password, {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    })
+  ) {
+    throw new apiError(
+      400,
+      "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+    );
+  }
+  const existingCanteenAdmin = await CanteenAdmin.findOne({
+    email: normalizedEmail,
+  });
+
+  if (existingCanteenAdmin) {
+    throw new apiError(409, "Already registered");
+  }
+
+  const canteenAdmin = await CanteenAdmin.create({
+    email: normalizedEmail,
+    password,
+    role: "Canteen Admin",
+    universityId: req.user.universityId,
+  });
+
+  const response = canteenAdmin.toObject();
+  delete response.password;
+
+  return res.status(201).json(new apiResponse(201, response, "Admin registered successfully"));
+});
+
+export { requestOtp, registerUniAdmin, loginUniAdmin, registerCanteenAdmin };
