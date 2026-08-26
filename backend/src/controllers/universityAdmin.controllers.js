@@ -410,4 +410,107 @@ export const uploadStudents = asyncHandler(async (req, res) => {
     )
   );
 });
-export { requestOtp, registerUniAdmin, loginUniAdmin, registerCanteenAdmin, uploadStudents };
+
+// Fetch All the Registered Students
+const getAllStudents = asyncHandler(async (req, res) => {
+  const { search, status, session, cursorCreatedAt, cursorId } = req.query;
+
+  const query = {
+    universityId: req.user.universityId,
+  };
+
+  if (search?.trim()) {
+    const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    query.$or = [
+      { name: { $regex: escapedSearch, $options: "i" } },
+      { registrationNo: { $regex: escapedSearch, $options: "i" } },
+      { cnic: { $regex: escapedSearch, $options: "i" } },
+    ];
+  }
+
+  if (status) {
+    query.isActive = status === "true" || status === true;
+  }
+  if (session) {
+    query.session = session;
+  }
+
+  // Cursor Pagination
+  if (cursorCreatedAt && cursorId) {
+    query.$and = query.$and || [];
+    query.$and.push({
+      $or: [
+        { createdAt: { $lt: new Date(cursorCreatedAt) } },
+        {
+          createdAt: new Date(cursorCreatedAt),
+          _id: { $lt: new mongoose.Types.ObjectId(cursorId) },
+        },
+      ],
+    });
+  }
+  const LIMIT = 10;
+  const uploadedStudents = await UploadedStudent.find(query)
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(LIMIT + 1);
+
+  const hasNextPage = uploadedStudents.length > LIMIT;
+  if (hasNextPage) {
+    uploadedStudents.pop();
+  }
+
+  const lastStudent = uploadedStudents[uploadedStudents.length - 1];
+  const nextCursor = hasNextPage
+    ? { cursorCreatedAt: lastStudent.createdAt, cursorId: lastStudent._id }
+    : null;
+
+  return res.status(200).json({
+    success: true,
+    data: uploadedStudents,
+    pagination: {
+      hasNextPage,
+      nextCursor,
+    },
+  });
+});
+
+// Update Status of Student --> Activate or Deactivate Student
+const updateStudentStatus = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    const student = await UploadedStudent.findById(id);
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    student.isActive = isActive;
+
+    await student.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Student ${isActive ? "activated" : "deactivated"} successfully`,
+      data: student,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+});
+export {
+  requestOtp,
+  registerUniAdmin,
+  loginUniAdmin,
+  registerCanteenAdmin,
+  uploadStudents,
+  getAllStudents,
+  updateStudentStatus,
+};
