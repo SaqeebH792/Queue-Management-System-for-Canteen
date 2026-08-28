@@ -8,7 +8,6 @@ const studentSchema = new mongoose.Schema(
       ref: "University",
       required: true,
     },
-
     registrationNo: {
       type: String,
       required: true,
@@ -37,23 +36,16 @@ const studentSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: function () {
-        return this.constructor.modelName === "Student";
-      },
-    },
-
-    department: {
-      type: String,
-      required: true,
-    },
-
-    session: {
-      type: String,
       required: true,
     },
 
     avatar: {
       type: String,
+    },
+
+    session: {
+      type: String,
+      required: true,
     },
 
     role: {
@@ -66,27 +58,9 @@ const studentSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-
-    isRegistered: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     timestamps: true,
-  }
-);
-
-// IMPORTANT
-// uniqueness is per university
-
-studentSchema.index(
-  {
-    universityId: 1,
-    cnic: 1,
-  },
-  {
-    unique: true,
   }
 );
 
@@ -103,14 +77,34 @@ studentSchema.index(
 studentSchema.index(
   {
     universityId: 1,
-    registrationNo: 1,
+    cnic: 1,
   },
   {
     unique: true,
   }
 );
 
+studentSchema.index(
+  {
+    universityId: 1,
+    registrationNo: 1,
+  },
+  {
+    unique: true,
+  }
+);
+studentSchema.index({
+  universityId: 1,
+  uploadedStudentId: 1,
+});
+studentSchema.index({
+  universityId: 1,
+  createdAt: -1,
+  _id: -1,
+});
+studentSchema.index({
+  universityId: 1,
+  name: 1,
+});
 studentSchema.plugin(authPlugin, { tokenFields: ["role"] });
-
 export const Student = mongoose.model("Student", studentSchema);
-export const UploadedStudent = mongoose.model("UploadedStudent", studentSchema);
