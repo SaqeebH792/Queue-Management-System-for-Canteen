@@ -505,6 +505,33 @@ const updateStudentStatus = asyncHandler(async (req, res, next) => {
     });
   }
 });
+
+const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const student = await UploadedStudent.findByIdAndDelete(id);
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Student deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
 export {
   requestOtp,
   registerUniAdmin,
@@ -513,4 +540,5 @@ export {
   uploadStudents,
   getAllStudents,
   updateStudentStatus,
+  deleteStudent,
 };
