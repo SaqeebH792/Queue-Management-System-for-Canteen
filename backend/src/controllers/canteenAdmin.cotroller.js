@@ -339,4 +339,249 @@ const getOrders = asyncHandler(async (req, res) => {
   );
 });
 
-export { loginCanteenAdmin, listProduct, getOrders };
+// Update Status, Generate QR Code and Send Notification when Status Changes
+
+const ORDER_TRANSITIONS = Object.freeze({
+  Pending: ["Accepted"],
+  Accepted: ["Preparing"],
+  Preparing: ["Ready"],
+  Ready: ["Delivered"],
+  Delivered: [],
+});
+const NOTIFICATIONS = Object.freeze({
+  Accepted: {
+    title: "Order Accepted",
+    message: "Your order has been accepted.",
+    type: "OrderAccepted",
+  },
+
+  Preparing: {
+    title: "Preparing Order",
+    message: "Your food is being prepared.",
+    type: "OrderPreparing",
+  },
+
+  Ready: {
+    title: "Order Ready",
+    message: "Your order is ready for pickup.",
+    type: "OrderReady",
+  },
+
+  Delivered: {
+    title: "Order Completed",
+    message: "Your order has been delivered.",
+    type: "OrderCompleted",
+  },
+});
+
+const updateStatus = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(orderId)) {
+    throw new apiError(400, "Invalid order id");
+  }
+
+  if (!status) {
+    throw new apiError(400, "Status is required");
+  }
+
+  const session = await mongoose.startSession();
+
+  let uploadedQr = null;
+  let notification = null;
+
+  try {
+    session.startTransaction();
+
+    const order = await Order.findById(orderId).session(session);
+
+    if (!order) {
+      throw new apiError(404, "Order not found");
+    }
+
+    // University check
+    if (!order.universityId.equals(req.user.universityId)) {
+      throw new apiError(403, "Unauthorized");
+    }
+
+    // Canteen admin ownership check
+    if (!order.canteenAdminId.equals(req.user._id)) {
+      throw new apiError(403, "You are not allowed to update this order");
+    }
+
+    const nextStates = ORDER_TRANSITIONS[order.status] ?? [];
+
+    if (!nextStates.includes(status)) {
+      throw new apiError(400, `Cannot change ${order.status} to ${status}`);
+    }
+
+    // Generate QR
+    if (status === "Accepted" && !order.pickupToken) {
+      const pickupToken = crypto.randomBytes(3).toString("hex");
+
+      const qrPayload = JSON.stringify({
+        token: pickupToken,
+      });
+
+      const tempDir = path.join(process.cwd(), "public", "temp");
+
+      await mkdir(tempDir, {
+        recursive: true,
+      });
+
+      const filePath = path.join(tempDir, `qr-${order._id}-${Date.now()}.png`);
+
+      await QRCode.toFile(filePath, qrPayload);
+
+      uploadedQr = await uploadOnCloudinary(filePath);
+
+      if (!uploadedQr) {
+        throw new apiError(500, "QR generation failed");
+      }
+
+      order.pickupToken = pickupToken;
+      order.qrCodeUrl = uploadedQr.secure_url;
+      order.qrUsed = false;
+    }
+
+    if (status === "Delivered") {
+      if (order.qrUsed) {
+        throw new apiError(400, "QR already used");
+      }
+
+      order.qrUsed = true;
+    }
+
+    order.status = status;
+
+    await order.save({
+      session,
+    });
+
+    // Create notification inside transaction
+
+    const notify = NOTIFICATIONS[status];
+
+    if (notify) {
+      notification = await OrderNotification.create(
+        [
+          {
+            recipient: order.studentId,
+            recipientModel: "Student",
+
+            universityId: order.universityId,
+
+            canteenAdminId: order.canteenAdminId,
+
+            orderId: order._id,
+
+            title: notify.title,
+
+            message: notify.message,
+
+            type: notify.type,
+
+            link: "/student/orders",
+          },
+        ],
+        {
+          session,
+        }
+      );
+
+      notification = notification[0];
+    }
+
+    await session.commitTransaction();
+
+    // Socket notification after transaction success
+
+    if (notification) {
+      try {
+        const io = getSocketIO();
+
+        // Only this student receives it
+        io.to(order.studentId.toString()).emit("newNotification", notification);
+
+        io.to(order.studentId.toString()).emit("orderStatusUpdated", {
+          orderId: order._id,
+          status,
+        });
+      } catch (socketError) {
+        console.error("Socket notification failed:", socketError.message);
+      }
+    }
+
+    return res.status(200).json(
+      new apiResponse(
+        200,
+        {
+          orderId: order._id,
+          status: order.status,
+          qrCodeUrl: order.qrCodeUrl ?? null,
+        },
+        "Order status updated successfully"
+      )
+    );
+  } catch (error) {
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+
+    if (uploadedQr?.public_id) {
+      await cloudinary.uploader.destroy(uploadedQr.public_id).catch(() => {});
+    }
+
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+});
+
+// Delete Products
+const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  // Validate ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new apiError(400, "Invalid product id");
+  }
+  // Find and delete in a single database query
+  const product = await Product.findOneAndDelete({
+    _id: id,
+    universityId: req.user.universityId,
+    canteenAdminId: req.user._id,
+  }).select("imagePublicId");
+
+  if (!product) {
+    throw new apiError(404, "Product not found");
+  }
+
+  // Delete image from Cloudinary
+  if (product.imagePublicId) {
+    try {
+      const result = await cloudinary.uploader.destroy(product.imagePublicId);
+
+      // "not found" is acceptable because the image is already gone
+      if (result.result !== "ok" && result.result !== "not found") {
+        logger?.error?.(
+          `Unexpected Cloudinary response while deleting image: ${JSON.stringify(result)}`
+        );
+      }
+    } catch (error) {
+      logger?.error?.(`Cloudinary cleanup failed for ${product.imagePublicId}: ${error.message}`);
+    }
+  }
+
+  return res.status(200).json(
+    new apiResponse(
+      200,
+      {
+        deletedProductId: id,
+      },
+      "Product deleted successfully"
+    )
+  );
+});
+export { loginCanteenAdmin, listProduct, getOrders ,  updateStatus, deleteProduct};
