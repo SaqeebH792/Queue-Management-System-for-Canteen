@@ -30,6 +30,7 @@ const getModelByRole = role => {
 
 // Middleware for Protected Routes
 const verifyJWT = asyncHandler(async (req, res, next) => {
+  console.log(req);
   const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
     throw new apiError(401, "Unauthorized at jwt");

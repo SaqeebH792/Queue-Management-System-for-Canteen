@@ -53,4 +53,6 @@ canteenAdminSchema.index(
   }
 );
 canteenAdminSchema.plugin(authPlugin, { tokenFields: ["role"] });
-export const CanteenAdmin = mongoose.model("CanteenAdmin", canteenAdminSchema);
+
+export const CanteenAdmin =
+  mongoose.models.CanteenAdmin || mongoose.model("CanteenAdmin", canteenAdminSchema);

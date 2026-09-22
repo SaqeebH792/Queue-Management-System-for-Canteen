@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@keyframes progressSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-progress-slide {
+  animation: progressSlide 1.5s infinite linear;
+}
+
+:root {
+  /* Material 3 Light Tokens */
+  --outline: #74777f;
+  --outline-variant: #c4c6cf;
+  --surface-tint: #455f88;
+  --primary: #002045;
+  --on-primary: #ffffff;
+  --primary-container: #1a365d;
+  --on-primary-container: #86a0cd;
+  --inverse-primary: #adc7f7;
+  --secondary: #1960a3;
+  --on-secondary: #ffffff;
+  --secondary-container: #7db6ff;
+  --on-secondary-container: #00477f;
+  --tertiary: #2d1d00;
+  --on-tertiary: #ffffff;
+  --tertiary-container: #493100;
+  --on-tertiary-container: #cb9524;
+  --error: #ba1a1a;
+  --on-error: #ffffff;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+  --primary-fixed: #d6e3ff;
+  --primary-fixed-dim: #adc7f7;
+  --on-primary-fixed: #001b3c;
+  --on-primary-fixed-variant: #2d476f;
+  --secondary-fixed: #d3e4ff;
+  --secondary-fixed-dim: #a2c9ff;
+  --on-secondary-fixed: #001c38;
+  --on-secondary-fixed-variant: #004881;
+  --tertiary-fixed: #ffdeaa;
+  --tertiary-fixed-dim: #f8bc4b;
+  --on-tertiary-fixed: #271900;
+  --on-tertiary-fixed-variant: #5f4100;
+  --background: #f7fafc;
+  --on-background: #181c1e;
+  --surface-variant: #e0e3e5;
+  --surface: #ffffff;
+  --on-surface: #181c1e;
+  --on-surface-variant: #44474e;
+}
+
+.dark {
+  /* Material 3 Dark Tokens */
+  --outline: #8e9099;
+  --outline-variant: #44474e;
+  --surface-tint: #adc7f7;
+  --primary: #adc7f7;
+  --on-primary: #002f63;
+  --primary-container: #1a365d;
+  --on-primary-container: #d6e3ff;
+  --inverse-primary: #002045;
+  --secondary: #a2c9ff;
+  --on-secondary: #00315b;
+  --secondary-container: #004881;
+  --on-secondary-container: #d3e4ff;
+  --tertiary: #f8bc4b;
+  --on-tertiary: #412d00;
+  --tertiary-container: #5f4100;
+  --on-tertiary-container: #ffdeaa;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  --background: #101417;
+  --on-background: #e0e3e5;
+  --surface-variant: #44474e;
+  --surface: #101417;
+  --on-surface: #e0e3e5;
+  --on-surface-variant: #c4c6cf;
+}

@@ -13,7 +13,7 @@ import {
   updateStatus,
   deleteProduct,
 } from "../controllers/canteenAdmin.controllers.js";
-import { scanQRCode } from "../controllers/scanQR.controllers.js";
+import { verifyOrder } from "../controllers/verifyOrder.controllers.js";
 import { CanteenAdmin } from "../models/CanteenAdmin.model.js";
 import { logoutUser } from "../controllers/logout.controllers.js";
 
@@ -36,6 +36,6 @@ router
 router.route("/product/:id").delete(verifyJWT, authorizeRole(ROLES.CANTEEN_ADMIN), deleteProduct);
 
 // Canteen Admin Scan QR Before Delivering Order to verify
-router.route("/scanQR").post(verifyJWT, authorizeRole(ROLES.CANTEEN_ADMIN), scanQRCode);
+router.route("/scanQR").post(verifyJWT, authorizeRole(ROLES.CANTEEN_ADMIN), verifyOrder);
 
 export default router;

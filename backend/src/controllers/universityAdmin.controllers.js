@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { SuperAdmin } from "../models/superAdmin.model.js";
 import { UniversityAdmin } from "../models/universityAdmin.model.js";
 import { University } from "../models/university.model.js";
-import { CanteenAdmin } from "../models/CanteenAdmin.model.js";
+import { CanteenAdmin } from "../models/canteenAdmin.model.js";
 import { Otp } from "../models/otp.model.js";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
 import { UploadedStudent } from "../models/uploadStudents.model.js";
