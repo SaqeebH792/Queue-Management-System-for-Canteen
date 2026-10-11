@@ -67,7 +67,7 @@ const UniversityAdmins = () => {
         title="University Admins"
         description="Monitor administrator accounts and their university associations."
         action={
-          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/2.5 px-3 py-2 text-xs text-slate-400">
             <ShieldCheck size={15} className="text-violet-400" /> {pagination?.totalAdmins ?? 0}{" "}
             admins
           </div>
@@ -93,7 +93,7 @@ const UniversityAdmins = () => {
           <div className="flex items-center gap-2">
             <Filter size={15} className="text-slate-600" />
             <select
-              className="select-dark w-[150px]"
+              className="select-dark w-37.5"
               value={status}
               onChange={e => {
                 setPage(1);
@@ -114,9 +114,9 @@ const UniversityAdmins = () => {
       )}
       <div className="panel overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[850px] text-left">
+          <table className="w-full min-w-212.5 text-left">
             <thead>
-              <tr className="bg-white/[.02] text-[10px] uppercase tracking-[.08em] text-slate-600">
+              <tr className="bg-white/2 text-[10px] uppercase tracking-[.08em] text-slate-600">
                 <th className="px-5 py-3 font-semibold">Administrator</th>
                 <th className="px-5 py-3 font-semibold">University</th>
                 <th className="px-5 py-3 font-semibold">Status</th>
@@ -177,7 +177,7 @@ const UniversityAdmins = () => {
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between border-t border-white/[.06] px-5 py-3">
+        <div className="flex items-center justify-between border-t border-white/6 px-5 py-3">
           <p className="text-xs text-slate-600">
             Page {pagination?.currentPage || 1} of {pagination?.totalPages || 1}
           </p>
@@ -203,8 +203,8 @@ const UniversityAdmins = () => {
       </div>
       {confirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/[.06] px-5 py-4">
+          <div className="w-full max-w-md rounded-xl border border-white/8 bg-[#171d23] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
               <div>
                 <p className="text-sm font-semibold text-white">Deactivate administrator?</p>
                 <p className="mt-0.5 text-xs text-slate-500">
@@ -219,7 +219,7 @@ const UniversityAdmins = () => {
               </button>
             </div>
             <div className="p-5">
-              <div className="rounded-lg bg-white/[.025] p-4">
+              <div className="rounded-lg bg-white/2.5 p-4">
                 <p className="font-medium text-slate-200">{confirm.fullName}</p>
                 <p className="mt-1 text-xs text-slate-500">{confirm.email}</p>
                 <p className="mt-3 text-xs text-slate-500">{confirm.university?.name}</p>

@@ -310,7 +310,7 @@ const UniversityDashboard = () => {
               <select
                 value={status}
                 onChange={e => handleStatusChange(e.target.value)}
-                className="flex-1 sm:flex-initial bg-[#F3F4F6] dark:bg-zinc-800/60 border-none text-zinc-800 dark:text-zinc-200 text-xs font-bold rounded-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#167CC2] cursor-pointer h-10 min-w-[130px]"
+                className="flex-1 sm:flex-initial bg-[#F3F4F6] dark:bg-zinc-800/60 border-none text-zinc-800 dark:text-zinc-200 text-xs font-bold rounded-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#167CC2] cursor-pointer h-10 min-w-32.5"
               >
                 <option value="">All Statuses</option>
                 <option value="true">Active</option>

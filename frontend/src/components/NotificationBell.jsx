@@ -3,17 +3,14 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function NotificationBell() {
-  const notifications = useSelector((state) => state.notification?.items || []);
+  const notifications = useSelector(state => state.notification?.items || []);
 
-  const unreadCount = notifications.filter(
-    (notification) => !notification.isRead,
-  ).length;
+  const unreadCount = notifications.filter(notification => !notification.isRead).length;
 
-  const adminAuth = useSelector((state) => state.auth);
-  const studentAuth = useSelector((state) => state.studentAuth);
+  const adminAuth = useSelector(state => state.auth);
+  const studentAuth = useSelector(state => state.studentAuth);
 
-  const currentUser =
-    adminAuth?.user?.data?.user || adminAuth?.user || studentAuth?.user;
+  const currentUser = adminAuth?.user?.data?.user || adminAuth?.user || studentAuth?.user;
 
   const role = currentUser?.role;
 
@@ -44,7 +41,7 @@ function NotificationBell() {
       <Bell className="w-5 h-5 transition-transform duration-200 hover:scale-110" />
 
       {unreadCount > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-4.5 px-1 text-[10px] font-bold text-white bg-rose-500 rounded-full ring-2 ring-white dark:ring-[#131926] shadow-xs">
+        <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-4.5 h-4.5 px-1 text-[10px] font-bold text-white bg-rose-500 rounded-full ring-2 ring-white dark:ring-[#131926] shadow-xs">
           {unreadCount > 99 ? "99+" : unreadCount}
         </span>
       )}

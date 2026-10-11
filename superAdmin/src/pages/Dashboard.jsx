@@ -23,7 +23,7 @@ const Donut = ({ percent, color, label }) => (
     className="relative flex h-40 w-40 shrink-0 items-center justify-center rounded-full"
     style={{ background: `conic-gradient(${color} ${percent}%, #2a323a ${percent}% 100%)` }}
   >
-    <div className="absolute inset-[13px] flex flex-col items-center justify-center rounded-full bg-[#151a1f]">
+    <div className="absolute inset-3.25 flex flex-col items-center justify-center rounded-full bg-[#151a1f]">
       <span className="text-3xl font-semibold text-white">{percent}%</span>
       <span className="mt-1 text-[11px] text-slate-500">{label}</span>
     </div>
@@ -83,7 +83,7 @@ const Dashboard = () => {
   if (loading) return <Loader />;
   if (error)
     return (
-      <div className="flex min-h-[420px] items-center justify-center">
+      <div className="flex min-h-105 items-center justify-center">
         <div className="panel max-w-md p-7 text-center">
           <XCircle className="mx-auto mb-3 text-rose-400" />
           <h2 className="font-semibold text-white">Unable to load dashboard</h2>
@@ -102,7 +102,7 @@ const Dashboard = () => {
         title="Dashboard"
         description="A real-time overview of the UniBite platform."
         action={
-          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/2.5 px-3 py-2 text-xs text-slate-400">
             <Activity size={15} className="text-blue-400" /> Platform overview
           </div>
         }
@@ -168,7 +168,7 @@ const Dashboard = () => {
                   total={stats.universities.total}
                   color="#64748b"
                 />
-                <div className="border-t border-white/[.06] pt-3">
+                <div className="border-t border-white/6 pt-3">
                   <div className="flex justify-between text-xs">
                     <span className="text-slate-500">Total</span>
                     <span className="font-semibold text-white">
@@ -193,7 +193,7 @@ const Dashboard = () => {
                   total={stats.universityAdmins.total}
                   color="#64748b"
                 />
-                <div className="border-t border-white/[.06] pt-3">
+                <div className="border-t border-white/6 pt-3">
                   <div className="flex justify-between text-xs">
                     <span className="text-slate-500">Total</span>
                     <span className="font-semibold text-white">
@@ -255,7 +255,7 @@ const Dashboard = () => {
               color="#64748b"
             />
           </div>
-          <div className="mt-6 border-t border-white/[.06] pt-4">
+          <div className="mt-6 border-t border-white/6 pt-4">
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-500">Total requests</span>
               <span className="text-lg font-semibold text-white">{num(requestTotal)}</span>

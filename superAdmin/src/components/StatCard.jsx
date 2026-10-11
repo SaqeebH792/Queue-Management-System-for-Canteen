@@ -7,7 +7,7 @@ const StatCard = ({ title, value, subtitle, icon: Icon, tone = "blue" }) => {
     red: "bg-rose-500/10 text-rose-400",
   };
   return (
-    <div className="panel group p-5 transition hover:border-white/[.12] hover:bg-[#181e24]">
+    <div className="panel group p-5 transition hover:border-white/12 hover:bg-[#181e24]">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[.08em] text-slate-500">

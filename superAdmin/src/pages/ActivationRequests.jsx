@@ -74,7 +74,7 @@ const ActivationRequests = () => {
         title="Activation Requests"
         description="Review university activation requests submitted by University Admins."
         action={
-          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/2.5 px-3 py-2 text-xs text-slate-400">
             <ClipboardCheck size={15} className="text-amber-400" /> {pagination?.totalRequests ?? 0}{" "}
             requests
           </div>
@@ -100,7 +100,7 @@ const ActivationRequests = () => {
           <div className="flex items-center gap-2">
             <Filter size={15} className="text-slate-600" />
             <select
-              className="select-dark w-[150px]"
+              className="select-dark w-37.5"
               value={status}
               onChange={e => {
                 setPage(1);
@@ -123,9 +123,9 @@ const ActivationRequests = () => {
       )}
       <div className="panel overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[850px] text-left">
+          <table className="w-full min-w-212.5 text-left">
             <thead>
-              <tr className="bg-white/[.02] text-[10px] uppercase tracking-[.08em] text-slate-600">
+              <tr className="bg-white/2 text-[10px] uppercase tracking-[.08em] text-slate-600">
                 <th className="px-5 py-3 font-semibold">University</th>
                 <th className="px-5 py-3 font-semibold">Requested by</th>
                 <th className="px-5 py-3 font-semibold">Status</th>
@@ -217,7 +217,7 @@ const ActivationRequests = () => {
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between border-t border-white/[.06] px-5 py-3">
+        <div className="flex items-center justify-between border-t border-white/6 px-5 py-3">
           <p className="text-xs text-slate-600">
             Page {pagination?.currentPage || 1} of {pagination?.totalPages || 1}
           </p>
@@ -244,8 +244,8 @@ const ActivationRequests = () => {
 
       {(rejectId || selected) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/[.06] px-5 py-4">
+          <div className="w-full max-w-lg rounded-xl border border-white/8 bg-[#171d23] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
               <div>
                 <p className="text-sm font-semibold text-white">
                   {rejectId ? "Reject activation request" : "Request details"}
@@ -296,19 +296,19 @@ const ActivationRequests = () => {
             ) : (
               <div className="space-y-4 p-5 text-sm">
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-lg bg-white/[.025] p-3">
+                  <div className="rounded-lg bg-white/2.5 p-3">
                     <p className="text-[10px] uppercase text-slate-600">University</p>
                     <p className="mt-1 font-medium text-slate-200">{selected?.university?.name}</p>
                     <p className="text-xs text-slate-600">{selected?.university?.email}</p>
                   </div>
-                  <div className="rounded-lg bg-white/[.025] p-3">
+                  <div className="rounded-lg bg-white/2.5 p-3">
                     <p className="text-[10px] uppercase text-slate-600">Status</p>
                     <div className="mt-2">
                       <StatusPill status={selected?.status} />
                     </div>
                   </div>
                 </div>
-                <div className="rounded-lg bg-white/[.025] p-3">
+                <div className="rounded-lg bg-white/2.5 p-3">
                   <p className="text-[10px] uppercase text-slate-600">Requested by</p>
                   <p className="mt-1 font-medium text-slate-200">
                     {selected?.requestedBy?.fullName}

@@ -8,7 +8,7 @@ const SuperAdminLayout = () => {
   return (
     <div className="page-shell">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:pl-[230px]">
+      <div className="lg:pl-57.5">
         <Navbar onMenu={() => setSidebarOpen(true)} />
         <main className="min-h-[calc(100vh-62px)] px-4 py-6 sm:px-6 lg:px-7">
           <Outlet />

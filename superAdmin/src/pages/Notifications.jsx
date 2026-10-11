@@ -55,10 +55,7 @@ const Notifications = () => {
         ) : (
           <div>
             {notifications.map((n, i) => (
-              <div
-                key={n._id || i}
-                className="border-b border-white/[.05] px-5 py-5 last:border-b-0"
-              >
+              <div key={n._id || i} className="border-b border-white/5 px-5 py-5 last:border-b-0">
                 <div className="flex gap-4">
                   <div
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${n.type === "ActivationApproved" ? "bg-emerald-500/10 text-emerald-400" : n.type === "ActivationRejected" ? "bg-rose-500/10 text-rose-400" : "bg-blue-500/10 text-blue-400"}`}

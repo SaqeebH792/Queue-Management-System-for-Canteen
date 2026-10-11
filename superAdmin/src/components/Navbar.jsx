@@ -11,7 +11,7 @@ const Navbar = ({ onMenu }) => {
   const recent = notifications.slice(0, 3);
 
   return (
-    <header className="sticky top-0 z-20 flex h-[62px] items-center justify-between border-b border-white/[.06] bg-[#0d1115]/95 px-4 backdrop-blur lg:px-6">
+    <header className="sticky top-0 z-20 flex h-15.5 items-center justify-between border-b border-white/6 bg-[#0d1115]/95 px-4 backdrop-blur lg:px-6">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenu}
@@ -19,10 +19,10 @@ const Navbar = ({ onMenu }) => {
         >
           <Menu size={20} />
         </button>
-        <div className="hidden items-center gap-2 rounded-lg border border-white/[.06] bg-white/[.025] px-3 py-2 text-xs text-slate-500 md:flex">
+        <div className="hidden items-center gap-2 rounded-lg border border-white/6 bg-white/2.5 px-3 py-2 text-xs text-slate-500 md:flex">
           <Search size={15} />
           <span>Search UniBite</span>
-          <kbd className="ml-8 rounded border border-white/[.08] px-1.5 py-0.5 text-[9px]">⌘ K</kbd>
+          <kbd className="ml-8 rounded border border-white/8 px-1.5 py-0.5 text-[9px]">⌘ K</kbd>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -47,8 +47,8 @@ const Navbar = ({ onMenu }) => {
                 className="fixed inset-0 z-30 cursor-default"
                 onClick={() => setOpen(false)}
               />
-              <div className="absolute right-0 top-11 z-40 w-[340px] overflow-hidden rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl shadow-black/40">
-                <div className="flex items-center justify-between border-b border-white/[.06] px-4 py-3">
+              <div className="absolute right-0 top-11 z-40 w-85 overflow-hidden rounded-xl border border-white/8 bg-[#171d23] shadow-2xl shadow-black/40">
+                <div className="flex items-center justify-between border-b border-white/6 px-4 py-3">
                   <div>
                     <p className="text-sm font-semibold text-white">Notifications</p>
                     <p className="text-[11px] text-slate-500">{unreadCount} unread</p>
@@ -65,7 +65,7 @@ const Navbar = ({ onMenu }) => {
                 </div>
                 {recent.length ? (
                   recent.map(n => (
-                    <div key={n._id} className="border-b border-white/[.04] px-4 py-3">
+                    <div key={n._id} className="border-b border-white/4 px-4 py-3">
                       <p className="text-xs font-semibold text-slate-200">{n.title}</p>
                       <p className="mt-1 line-clamp-2 text-[11px] text-slate-500">{n.message}</p>
                     </div>

@@ -69,6 +69,7 @@ function CanteenAdminDashboard() {
       setNextCursor(result.pagination?.nextCursor || null);
     } catch (error) {
       toast.error("Could not load more orders");
+      console.log(error);
     } finally {
       setLoadingMore(false);
     }
@@ -296,7 +297,7 @@ function CanteenAdminDashboard() {
               <AnimatePresence mode="wait">
                 {orders.length > 0 ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[700px]">
+                    <table className="w-full text-left border-collapse min-w-175">
                       <thead>
                         <tr className="border-b border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/40 text-[11px] font-bold tracking-wider text-slate-400 uppercase">
                           <th className="py-4 px-6">Order ID</th>
@@ -361,7 +362,7 @@ function CanteenAdminDashboard() {
                               </td>
 
                               <td className="py-4 px-6">
-                                <p className="font-medium text-slate-800 dark:text-zinc-200 line-clamp-1 max-w-[220px]">
+                                <p className="font-medium text-slate-800 dark:text-zinc-200 line-clamp-1 max-w-55">
                                   {order.items?.map(item => item.name || item.title).join(", ") ||
                                     "No items specified"}
                                 </p>

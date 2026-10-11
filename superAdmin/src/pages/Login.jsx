@@ -30,7 +30,7 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-[#0b0f13] text-white">
       <div className="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
-        <div className="relative hidden overflow-hidden border-r border-white/[.06] lg:flex lg:flex-col lg:justify-between lg:p-12">
+        <div className="relative hidden overflow-hidden border-r border-white/6 lg:flex lg:flex-col lg:justify-between lg:p-12">
           <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-600/15 blur-3xl" />
           <div className="relative">
             <div className="flex items-center gap-3">

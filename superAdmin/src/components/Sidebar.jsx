@@ -50,9 +50,9 @@ const Sidebar = ({ open, onClose }) => {
         />
       )}
       <aside
-        className={`mobile-sidebar sidebar-transition fixed inset-y-0 left-0 z-40 flex w-[230px] flex-col border-r border-white/[.06] bg-[#151a1f] lg:translate-x-0 ${open ? "open" : ""}`}
+        className={`mobile-sidebar sidebar-transition fixed inset-y-0 left-0 z-40 flex w-57.5 flex-col border-r border-white/6 bg-[#151a1f] lg:translate-x-0 ${open ? "open" : ""}`}
       >
-        <div className="flex h-[62px] items-center justify-between border-b border-white/[.06] px-4">
+        <div className="flex h-15.5 items-center justify-between border-b border-white/6 px-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white shadow-lg shadow-blue-900/20">
               <UtensilsCrossed size={18} />
@@ -100,8 +100,8 @@ const Sidebar = ({ open, onClose }) => {
           ))}
         </div>
 
-        <div className="border-t border-white/[.06] p-3">
-          <div className="mb-2 flex items-center gap-3 rounded-lg bg-white/[.025] px-3 py-2.5">
+        <div className="border-t border-white/6 p-3">
+          <div className="mb-2 flex items-center gap-3 rounded-lg bg-white/2.5 px-3 py-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/15 text-xs font-bold text-blue-400">
               SA
             </div>
