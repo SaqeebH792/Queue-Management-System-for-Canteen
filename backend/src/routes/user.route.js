@@ -82,4 +82,6 @@ router
     authorizeRole(ROLES.STUDENT, ROLES.UNIVERSITY_ADMIN, ROLES.CANTEEN_ADMIN),
     updateProfile.updatePassword
   );
+
+router.route("/verify").get(verifyJWT, verifyAdmin);
 export default router;

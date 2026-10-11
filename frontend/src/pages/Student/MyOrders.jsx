@@ -1,20 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Utensils,
-  History,
-  AlertCircle,
-  RefreshCw,
-  ShoppingBag,
-} from "lucide-react";
+import { Utensils, History, AlertCircle, RefreshCw, ShoppingBag } from "lucide-react";
 import { fetchMyOrders } from "../../store/orderSlice";
 import MyOrderCard from "../../components/student/MyOrderCard";
 import MyOrdersSkeleton from "../../components/skeleton/MyOrdersSkeleton";
 import QRCodeModal from "../../components/student/QRCodeModal";
 import { Helmet } from "react-helmet-async";
 
-// Modern Animation Variants
 const fadeIn = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.3 } },
@@ -62,7 +55,7 @@ const headerVariants = {
 
 function MyOrders() {
   const dispatch = useDispatch();
-  const { orders = [], loading, error } = useSelector((state) => state.orders);
+  const { orders = [], loading, error } = useSelector(state => state.orders);
 
   const [selectedQrOrder, setSelectedQrOrder] = useState(null);
 
@@ -74,13 +67,9 @@ function MyOrders() {
     const active = [];
     const past = [];
 
-    orders.forEach((order) => {
+    orders.forEach(order => {
       const status = order.status?.toLowerCase();
-      if (
-        status === "delivered" ||
-        status === "completed" ||
-        status === "cancelled"
-      ) {
+      if (status === "delivered" || status === "completed" || status === "cancelled") {
         past.push(order);
       } else {
         active.push(order);
@@ -98,7 +87,6 @@ function MyOrders() {
 
       <div className="min-h-screen text-[#2C1810] dark:text-[#E8E8E8] sm:px-8 lg:px-10 font-sans transition-colors duration-300 pb-20 overflow-x-hidden pt-22 sm:pt-30">
         <div className="max-w-7xl mx-auto space-y-8 px-4 sm:px-6">
-          {/* Header Section */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -112,8 +100,6 @@ function MyOrders() {
               Track current cravings and review past favorites.
             </p>
           </motion.div>
-
-          {/* Main State Handling with Transitions */}
           <AnimatePresence mode="wait">
             {loading ? (
               <motion.div
@@ -141,8 +127,7 @@ function MyOrders() {
                   Failed to Load Orders
                 </h3>
                 <p className="text-xs font-medium text-slate-400 mb-6 max-w-sm leading-relaxed">
-                  {error.message ||
-                    "Something went wrong while retrieving your order records."}
+                  {error.message || "Something went wrong while retrieving your order records."}
                 </p>
                 <button
                   onClick={() => dispatch(fetchMyOrders())}
@@ -168,8 +153,7 @@ function MyOrders() {
                   No orders found
                 </p>
                 <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-                  When you order meals from campus canteens, they will appear
-                  right here.
+                  When you order meals from campus canteens, they will appear right here.
                 </p>
               </motion.div>
             ) : (
@@ -181,7 +165,6 @@ function MyOrders() {
                 exit="exit"
                 className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
               >
-                {/* Left Column: Active Orders (Broader layout - 7/12 cols) */}
                 <section className="lg:col-span-7 space-y-4">
                   <motion.div
                     variants={headerVariants}
@@ -191,9 +174,7 @@ function MyOrders() {
                     className="flex items-center gap-2 text-[#2C1810] dark:text-white pb-2 border-b border-slate-200/60 dark:border-slate-800"
                   >
                     <Utensils size={18} className="text-[#A93226]" />
-                    <h2 className="text-xl font-serif font-bold">
-                      Active Orders
-                    </h2>
+                    <h2 className="text-xl font-serif font-bold">Active Orders</h2>
                     {activeOrders.length > 0 && (
                       <span className="ml-auto text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
                         {activeOrders.length} active
@@ -209,11 +190,8 @@ function MyOrders() {
                       viewport={{ once: true, margin: "-50px" }}
                       className="space-y-4"
                     >
-                      {activeOrders.map((order) => (
-                        <motion.div
-                          key={order._id}
-                          variants={cardRevealVariants}
-                        >
+                      {activeOrders.map(order => (
+                        <motion.div key={order._id} variants={cardRevealVariants}>
                           <MyOrderCard
                             order={order}
                             isActiveOrder={true}
@@ -230,8 +208,6 @@ function MyOrders() {
                     </div>
                   )}
                 </section>
-
-                {/* Right Column: Order History (Scrollable sidebar - 5/12 cols) */}
                 <section className="lg:col-span-5 space-y-4 lg:sticky lg:top-28">
                   <motion.div
                     variants={headerVariants}
@@ -241,13 +217,10 @@ function MyOrders() {
                     className="flex items-center gap-2 text-[#2C1810] dark:text-white pb-2 border-b border-slate-200/60 dark:border-slate-800"
                   >
                     <History size={18} className="text-slate-400" />
-                    <h2 className="text-xl font-serif font-bold">
-                      Order History
-                    </h2>
+                    <h2 className="text-xl font-serif font-bold">Order History</h2>
                   </motion.div>
 
                   {pastOrders.length > 0 ? (
-                    /* Custom scrollable container for history */
                     <div className="lg:max-h-[calc(100vh-220px)] lg:overflow-y-auto lg:pr-2 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
                       <motion.div
                         variants={listContainerVariants}
@@ -256,11 +229,8 @@ function MyOrders() {
                         viewport={{ once: true, margin: "-50px" }}
                         className="space-y-4"
                       >
-                        {pastOrders.map((order) => (
-                          <motion.div
-                            key={order._id}
-                            variants={cardRevealVariants}
-                          >
+                        {pastOrders.map(order => (
+                          <motion.div key={order._id} variants={cardRevealVariants}>
                             <MyOrderCard
                               order={order}
                               isActiveOrder={false}
@@ -272,9 +242,7 @@ function MyOrders() {
                     </div>
                   ) : (
                     <div className="bg-white/50 dark:bg-[#2B2D30]/50 rounded-2xl p-8 text-center border border-dashed border-slate-200 dark:border-slate-800">
-                      <p className="text-xs text-slate-400 font-medium">
-                        No past orders found.
-                      </p>
+                      <p className="text-xs text-slate-400 font-medium">No past orders found.</p>
                     </div>
                   )}
                 </section>
@@ -283,16 +251,10 @@ function MyOrders() {
           </AnimatePresence>
         </div>
       </div>
-
-      {/* QR Code Modal for order collection */}
       {selectedQrOrder && (
-        <QRCodeModal
-          order={selectedQrOrder}
-          onClose={() => setSelectedQrOrder(null)}
-        />
+        <QRCodeModal order={selectedQrOrder} onClose={() => setSelectedQrOrder(null)} />
       )}
     </>
   );
 }
-
 export default MyOrders;

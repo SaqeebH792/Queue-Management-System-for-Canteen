@@ -6,7 +6,7 @@ const verifyAdmin = asyncHandler(async (req, res) => {
       200,
       {
         user: req.user,
-        role: req.user.role,
+        role: req.user?.role,
       },
       "User verified successfully"
     )

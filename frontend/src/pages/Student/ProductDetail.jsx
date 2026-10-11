@@ -23,17 +23,15 @@ import { Helmet } from "react-helmet-async";
 
 function ProductDetail() {
   const { id } = useParams();
-  const { isAuthenticated, user } = useSelector((state) => state.studentAuth);
+  const { isAuthenticated, user } = useSelector(state => state.studentAuth);
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
 
-  // Customization Options State
   const [selectedCustomizations, setSelectedCustomizations] = useState([]);
 
-  // Dynamic Reviews State & Write Toggle
   const [reviews, setReviews] = useState([]);
   const [showWriteReview, setShowWriteReview] = useState(false);
   const [newRating, setNewRating] = useState(5);
@@ -66,24 +64,22 @@ function ProductDetail() {
   }, [id]);
 
   const increaseQuantity = () => {
-    setQuantity((prev) => (prev < MAX_QTY ? prev + 1 : prev));
+    setQuantity(prev => (prev < MAX_QTY ? prev + 1 : prev));
   };
 
   const decreaseQuantity = () => {
-    setQuantity((prev) => (prev > MIN_QTY ? prev - 1 : MIN_QTY));
+    setQuantity(prev => (prev > MIN_QTY ? prev - 1 : MIN_QTY));
   };
 
-  const handleCustomizationToggle = (opt) => {
-    if (selectedCustomizations.some((item) => item.name === opt.name)) {
-      setSelectedCustomizations(
-        selectedCustomizations.filter((item) => item.name !== opt.name),
-      );
+  const handleCustomizationToggle = opt => {
+    if (selectedCustomizations.some(item => item.name === opt.name)) {
+      setSelectedCustomizations(selectedCustomizations.filter(item => item.name !== opt.name));
     } else {
       setSelectedCustomizations([...selectedCustomizations, opt]);
     }
   };
 
-  const handleActionWithAuth = (actionType) => {
+  const handleActionWithAuth = actionType => {
     if (!isAuthenticated) {
       setPendingAction(actionType);
       setShowLoginModal(true);
@@ -92,7 +88,7 @@ function ProductDetail() {
     executeAction(actionType);
   };
 
-  const executeAction = (actionType) => {
+  const executeAction = actionType => {
     if (actionType === "order") {
       setShowOrderModal(true);
     }
@@ -111,16 +107,16 @@ function ProductDetail() {
     setPendingAction(null);
   };
 
-  const handleOrderSuccess = (order) => {
+  const handleOrderSuccess = order => {
     alert(
       `Order placed successfully!\nEstimated Time: ${
         order?.estimatedTime || item?.prepTime || "15-20"
-      } Minutes`,
+      } Minutes`
     );
     setShowOrderModal(false);
   };
 
-  const handleAddReview = (e) => {
+  const handleAddReview = e => {
     e.preventDefault();
     if (!isAuthenticated) {
       setPendingAction("review");
@@ -172,25 +168,16 @@ function ProductDetail() {
       </div>
     );
   }
-
-  // Price calculations including customization add-ons
   const baseUnitPrice = item?.price || 0;
-  const extrasTotalPrice = selectedCustomizations.reduce(
-    (acc, curr) => acc + (curr.price || 0),
-    0,
-  );
+  const extrasTotalPrice = selectedCustomizations.reduce((acc, curr) => acc + (curr.price || 0), 0);
   const totalUnitPrice = baseUnitPrice + extrasTotalPrice;
   const totalPrice = (totalUnitPrice * quantity).toFixed(2);
 
   const galleryImages = item?.images || (item?.image ? [item.image] : []);
 
-  // Compute average rating from actual reviews
   const avgRating =
     reviews.length > 0
-      ? (
-          reviews.reduce((acc, rev) => acc + (rev.rating || 0), 0) /
-          reviews.length
-        ).toFixed(1)
+      ? (reviews.reduce((acc, rev) => acc + (rev.rating || 0), 0) / reviews.length).toFixed(1)
       : null;
 
   return (
@@ -200,7 +187,6 @@ function ProductDetail() {
       </Helmet>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-        {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
           <Link
             to="/"
@@ -217,9 +203,7 @@ function ProductDetail() {
           </span>
         </nav>
 
-        {/* Top Product Showcase */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left: Gallery Column */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-[8%]">
           <div className="lg:col-span-6 space-y-4">
             <div className="relative w-full aspect-4/3 bg-white dark:bg-[#2B2D30] rounded-3xl overflow-hidden border border-slate-200/60 dark:border-slate-800/80 shadow-sm flex items-center justify-center p-4">
               <img
@@ -234,8 +218,6 @@ function ProductDetail() {
                 </div>
               )}
             </div>
-
-            {/* Thumbnails */}
             {galleryImages.length > 1 && (
               <div className="flex gap-3 overflow-x-auto pb-1">
                 {galleryImages.map((img, idx) => (
@@ -259,7 +241,6 @@ function ProductDetail() {
             )}
           </div>
 
-          {/* Right: Details & Order Box */}
           <div className="lg:col-span-6 space-y-5">
             {item.category && (
               <p className="text-xs font-bold tracking-widest text-[#A93226] dark:text-[#E74C3C] uppercase">
@@ -270,8 +251,6 @@ function ProductDetail() {
             <h1 className="text-3xl sm:text-4xl border-b border-white dark:border-[#2B2D30] font-serif font-bold text-[#2C1810] dark:text-white leading-tight">
               {item.name}
             </h1>
-
-            {/* Price & Rating Badge */}
             <div className="flex items-center gap-3">
               <span className="text-2xl font-serif font-bold text-[#A93226] dark:text-[#E74C3C]">
                 Rs:{baseUnitPrice}
@@ -299,12 +278,10 @@ function ProductDetail() {
               )}
             </div>
 
-            {/* Description */}
             <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
               {item.description || "No description available for this item."}
             </p>
 
-            {/* Customize Options Box (Rendered dynamically if item supports customizations) */}
             {item.customizations && item.customizations.length > 0 && (
               <div className="bg-white dark:bg-[#2B2D30] rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 space-y-3.5 shadow-xs">
                 <h3 className="font-serif font-bold text-sm text-[#2C1810] dark:text-white">
@@ -312,9 +289,7 @@ function ProductDetail() {
                 </h3>
                 <div className="space-y-2.5">
                   {item.customizations.map((option, idx) => {
-                    const isChecked = selectedCustomizations.some(
-                      (c) => c.name === option.name,
-                    );
+                    const isChecked = selectedCustomizations.some(c => c.name === option.name);
                     return (
                       <label
                         key={idx}
@@ -346,11 +321,8 @@ function ProductDetail() {
                 </div>
               </div>
             )}
-
-            {/* Quantity and Add to Cart Section */}
             <div className="pt-2 space-y-3">
               <div className="flex items-center gap-3">
-                {/* Quantity Stepper */}
                 <div className="flex items-center bg-[#F3E5E1] dark:bg-[#2B2D30] rounded-full px-3 py-1.5 border border-slate-200/60 dark:border-slate-800">
                   <button
                     type="button"
@@ -371,7 +343,6 @@ function ProductDetail() {
                   </button>
                 </div>
 
-                {/* Primary Add Button */}
                 <button
                   type="button"
                   onClick={() => handleActionWithAuth("order")}
@@ -381,22 +352,14 @@ function ProductDetail() {
                   <span>Buy Now - Rs:{totalPrice}</span>
                 </button>
               </div>
-
-              {/* Prep time info */}
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
                 <Clock size={12} />
-                <span>
-                  Estimated preparation time: {item.prepTime || "15-20 mins"}
-                </span>
+                <span>Estimated preparation time: {item.prepTime || "15-20 mins"}</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Separator */}
         <hr className="border-slate-200/60 dark:border-slate-800/80 my-8" />
-
-        {/* Customer Reviews Header */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -412,15 +375,13 @@ function ProductDetail() {
 
             <button
               type="button"
-              onClick={() => setShowWriteReview((prev) => !prev)}
+              onClick={() => setShowWriteReview(prev => !prev)}
               className="px-4 py-2 rounded-full border border-[#A93226]/30 dark:border-[#E74C3C]/40 bg-[#F3E5E1]/40 dark:bg-[#2B2D30] text-[#A93226] dark:text-[#E74C3C] hover:bg-[#A93226] hover:text-white dark:hover:bg-[#E74C3C] dark:hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <PenSquare size={14} />
               <span>Write a Review</span>
             </button>
           </div>
-
-          {/* Toggleable Write Review Input Box */}
           {showWriteReview && (
             <form
               onSubmit={handleAddReview}
@@ -431,7 +392,7 @@ function ProductDetail() {
                   Rate this item
                 </span>
                 <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
+                  {[1, 2, 3, 4, 5].map(star => (
                     <button
                       key={star}
                       type="button"
@@ -456,7 +417,7 @@ function ProductDetail() {
               <textarea
                 rows={3}
                 value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
+                onChange={e => setNewComment(e.target.value)}
                 placeholder="Write your review here..."
                 className="w-full p-3 bg-[#FAF3F0] dark:bg-[#1E1F21] border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-medium text-[#2C1810] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#A93226] resize-none"
               />
@@ -479,8 +440,6 @@ function ProductDetail() {
               </div>
             </form>
           )}
-
-          {/* Customer Reviews Grid - Only renders existing reviews */}
           {reviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {reviews.map((rev, index) => {
@@ -538,8 +497,6 @@ function ProductDetail() {
           )}
         </div>
       </main>
-
-      {/* Modals */}
       <LoginModal
         isOpen={showLoginModal}
         onClose={handleLoginClose}
@@ -556,5 +513,4 @@ function ProductDetail() {
     </div>
   );
 }
-
 export default ProductDetail;

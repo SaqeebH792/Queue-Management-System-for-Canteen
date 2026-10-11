@@ -13,7 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-const normalizeDomain = (domainStr) => {
+const normalizeDomain = domainStr => {
   if (!domainStr) return "";
   return domainStr
     .trim()
@@ -33,29 +33,25 @@ function RegisterAdmin() {
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  // Live validation helpers for feedback badge
-  const normalizedDomain = useMemo(
-    () => normalizeDomain(formData.domain),
-    [formData.domain],
-  );
+  const normalizedDomain = useMemo(() => normalizeDomain(formData.domain), [formData.domain]);
   const emailDomain = useMemo(
     () => formData.email.trim().toLowerCase().split("@")[1] || "",
-    [formData.email],
+    [formData.email]
   );
   const isDomainMatching = useMemo(() => {
     if (!normalizedDomain || !emailDomain) return null;
     return normalizedDomain === emailDomain;
   }, [normalizedDomain, emailDomain]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     const payload = {
@@ -92,9 +88,7 @@ function RegisterAdmin() {
       navigate("/admin/verify");
     } catch (error) {
       if (error.response?.status === 429) {
-        toast.error(
-          "Too many attempts. Please wait before requesting another OTP.",
-        );
+        toast.error("Too many attempts. Please wait before requesting another OTP.");
         return;
       }
 
@@ -111,25 +105,18 @@ function RegisterAdmin() {
       </Helmet>
 
       <div className="min-h-screen bg-[#F3F4F6] dark:bg-[#121315] text-[#1E1F21] dark:text-zinc-100 flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans transition-colors duration-200">
-        {/* Main Card Container */}
         <div className="w-full max-w-xl my-auto">
           <div className="bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-[28px] p-6 sm:p-8 md:p-10 shadow-xs space-y-6">
-            {/* Header Title */}
             <div className="text-center space-y-1">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E1F21] dark:text-white">
                 Register University
               </h1>
               <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto font-medium">
-                Set up your institutional dashboard to manage campus students
-                and canteen vendors.
+                Set up your institutional dashboard to manage campus students and canteen vendors.
               </p>
             </div>
-
-            {/* Registration Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Row 1: University Name & University Domain Side-by-Side */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Field 1: University Name */}
                 <div className="space-y-2">
                   <label
                     htmlFor="universityName"
@@ -153,8 +140,6 @@ function RegisterAdmin() {
                     />
                   </div>
                 </div>
-
-                {/* Field 2: University Domain */}
                 <div className="space-y-2">
                   <label
                     htmlFor="domain"
@@ -178,16 +163,11 @@ function RegisterAdmin() {
                     />
                   </div>
                   <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium pl-2">
-                    Omit{" "}
-                    <code className="text-[#167CC2] font-semibold">
-                      https://
-                    </code>{" "}
-                    prefix.
+                    Omit <code className="text-[#167CC2] font-semibold">https://</code> prefix.
                   </p>
                 </div>
               </div>
 
-              {/* Row 2: Admin Email (Full Width) */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -211,8 +191,6 @@ function RegisterAdmin() {
                   />
                 </div>
               </div>
-
-              {/* Live Validation Alert Badge */}
               {isDomainMatching !== null && (
                 <div
                   className={`p-3 rounded-2xl border flex items-center gap-3 transition-all ${
@@ -233,8 +211,6 @@ function RegisterAdmin() {
                   </p>
                 </div>
               )}
-
-              {/* Action Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -253,15 +229,10 @@ function RegisterAdmin() {
                 )}
               </button>
             </form>
-
-            {/* Bottom Links */}
             <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium">
               <div className="text-zinc-500 dark:text-zinc-400">
                 Already registered?{" "}
-                <Link
-                  to="/admin/login"
-                  className="font-extrabold text-[#167CC2] hover:underline"
-                >
+                <Link to="/admin/login" className="font-extrabold text-[#167CC2] hover:underline">
                   Sign In
                 </Link>
               </div>
@@ -274,8 +245,6 @@ function RegisterAdmin() {
               </Link>
             </div>
           </div>
-
-          {/* Footer Note */}
           <p className="mt-4 text-center text-[11px] text-zinc-400 dark:text-zinc-500 font-medium">
             Encrypted &amp; System-verified university authentication
           </p>

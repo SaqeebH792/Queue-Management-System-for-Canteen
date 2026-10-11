@@ -1,24 +1,17 @@
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "../components/university/Sidebar";
 import Navbar from "../components/Navbar";
 import { verifyAuth, logoutAction } from "../store/authSlice";
 
-import {
-  LayoutDashboard,
-  Upload,
-  Utensils,
-  UserPlus,
-  User,
-  LogOut,
-} from "lucide-react";
+import { LayoutDashboard, Upload, Utensils, UserPlus, User, LogOut } from "lucide-react";
 
 function CanteenLayout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector(state => state.auth);
 
   useEffect(() => {
     if (!user) {
@@ -87,18 +80,10 @@ function CanteenLayout() {
         <div className="absolute top-1/3 -left-40 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-600/10 rounded-full blur-3xl" />
       </div>
 
-      <Sidebar
-        links={links}
-        profileLinks={profileLinks}
-        user={user}
-        brandName="EduAdmin Portal"
-      />
+      <Sidebar links={links} profileLinks={profileLinks} user={user} brandName="EduAdmin Portal" />
 
       <div className="flex-1 flex flex-col min-w-0 z-10">
-        <Navbar
-          user={isAuthenticated ? user : null}
-          profileLinks={profileLinks}
-        />
+        <Navbar user={isAuthenticated ? user : null} profileLinks={profileLinks} />
 
         <main className="p-4 max-w-7xl w-full mx-auto flex-1">
           <Outlet />

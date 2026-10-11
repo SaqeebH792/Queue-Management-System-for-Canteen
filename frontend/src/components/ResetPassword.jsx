@@ -2,51 +2,34 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
-import {
-  Mail,
-  Lock,
-  ShieldCheck,
-  Loader2,
-  Eye,
-  EyeOff,
-  ArrowLeft,
-  KeyRound,
-} from "lucide-react";
+import { Mail, Lock, ShieldCheck, Loader2, Eye, EyeOff, ArrowLeft, KeyRound } from "lucide-react";
 
-// Import your fallback API services directly
-import {
-  requestStudentOtp,
-  resetStudentPassword,
-} from "../routes/student.routes";
+import { requestStudentOtp, resetStudentPassword } from "../routes/student.routes";
 const ResetPassword = ({
   requestOtpApi = requestStudentOtp,
   resetPasswordApi = resetStudentPassword,
 }) => {
   const navigate = useNavigate();
 
-  // Form State
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // UI State
   const [otpRequested, setOtpRequested] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
-  // Resend Countdown Timer
   useEffect(() => {
     if (countdown <= 0) return;
     const interval = setInterval(() => {
-      setCountdown((prev) => prev - 1);
+      setCountdown(prev => prev - 1);
     }, 1000);
     return () => clearInterval(interval);
   }, [countdown]);
 
-  // Request OTP Handler
   const handleRequestOtp = async () => {
     if (!email.trim()) {
       toast.error("Please enter your email address.");
@@ -61,15 +44,12 @@ const ResetPassword = ({
       setOtpRequested(true);
       setCountdown(60);
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message || "Unable to send verification code.",
-      );
+      toast.error(err?.response?.data?.message || "Unable to send verification code.");
     } finally {
       setOtpLoading(false);
     }
   };
 
-  // Reset Password Handler
   const handleResetPassword = async () => {
     if (!otp.trim()) {
       toast.error("Please enter the verification code.");
@@ -108,7 +88,7 @@ const ResetPassword = ({
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     if (!otpRequested) {
       handleRequestOtp();
@@ -126,7 +106,6 @@ const ResetPassword = ({
       <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8 transition-colors duration-300 overflow-hidden">
         <div className="relative w-full max-w-md z-10">
           <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-6 sm:p-8 shadow-xs space-y-6">
-            {/* Top Bar */}
             <div className="flex items-center justify-between">
               <button
                 type="button"
@@ -142,7 +121,6 @@ const ResetPassword = ({
               </div>
             </div>
 
-            {/* Heading */}
             <div className="space-y-1 text-center">
               <h1 className="text-2xl font-extrabold text-[#1E1F21] dark:text-white tracking-tight">
                 Reset Password
@@ -154,7 +132,6 @@ const ResetPassword = ({
               </p>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Field */}
               <div className="space-y-1.5">
@@ -167,7 +144,7 @@ const ResetPassword = ({
                     placeholder="name@example.com"
                     value={email}
                     disabled={otpRequested}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
                     className="w-full px-4 py-3 rounded-[20px] bg-[#F3F4F6] dark:bg-zinc-800/60 border-none text-xs font-medium text-[#1E1F21] dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#167CC2] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   <Mail
@@ -208,14 +185,11 @@ const ResetPassword = ({
                     disabled={countdown > 0 || otpLoading}
                     className="text-xs font-extrabold text-[#167CC2] hover:underline disabled:opacity-50 disabled:no-underline cursor-pointer disabled:cursor-not-allowed"
                   >
-                    {countdown > 0
-                      ? `Resend code in ${countdown}s`
-                      : "Resend Code"}
+                    {countdown > 0 ? `Resend code in ${countdown}s` : "Resend Code"}
                   </button>
                 </div>
               )}
 
-              {/* Step 2 Inputs */}
               {otpRequested && (
                 <div className="space-y-4 pt-1">
                   <div className="space-y-1.5">
@@ -227,9 +201,7 @@ const ResetPassword = ({
                         type="text"
                         maxLength={6}
                         value={otp}
-                        onChange={(e) =>
-                          setOtp(e.target.value.replace(/\D/g, ""))
-                        }
+                        onChange={e => setOtp(e.target.value.replace(/\D/g, ""))}
                         placeholder="Enter 6-digit code"
                         className="w-full px-4 py-3 rounded-[20px] bg-[#F3F4F6] dark:bg-zinc-800/60 border-none text-xs font-extrabold tracking-widest text-[#1E1F21] dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#167CC2] transition-all"
                       />
@@ -248,7 +220,7 @@ const ResetPassword = ({
                       <input
                         type={showPassword ? "text" : "password"}
                         value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
+                        onChange={e => setNewPassword(e.target.value)}
                         placeholder="At least 8 characters"
                         className="w-full px-4 py-3 rounded-[20px] bg-[#F3F4F6] dark:bg-zinc-800/60 border-none text-xs font-medium text-[#1E1F21] dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#167CC2] transition-all"
                       />
@@ -257,11 +229,7 @@ const ResetPassword = ({
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 focus:outline-none transition-colors cursor-pointer"
                       >
-                        {showPassword ? (
-                          <EyeOff size={16} />
-                        ) : (
-                          <Eye size={16} />
-                        )}
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
                   </div>
@@ -274,7 +242,7 @@ const ResetPassword = ({
                       <input
                         type={showPassword ? "text" : "password"}
                         value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        onChange={e => setConfirmPassword(e.target.value)}
                         placeholder="Repeat new password"
                         className="w-full px-4 py-3 rounded-[20px] bg-[#F3F4F6] dark:bg-zinc-800/60 border-none text-xs font-medium text-[#1E1F21] dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#167CC2] transition-all"
                       />

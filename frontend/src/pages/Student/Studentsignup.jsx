@@ -41,14 +41,14 @@ function StudentSignup() {
     },
   ];
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({
+  const handleChange = e => {
+    setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     const toastId = toast.loading("Sending verification code...");
 
@@ -63,10 +63,7 @@ function StudentSignup() {
 
       await studentSignup(sanitizedPayload);
 
-      sessionStorage.setItem(
-        "studentRegistration",
-        JSON.stringify(sanitizedPayload),
-      );
+      sessionStorage.setItem("studentRegistration", JSON.stringify(sanitizedPayload));
 
       toast.success("OTP sent successfully!", { id: toastId });
 
@@ -95,7 +92,6 @@ function StudentSignup() {
       </Helmet>
 
       <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8 transition-colors duration-300 overflow-hidden">
-        {/* Card Container */}
         <div className="relative w-full max-w-md z-10">
           <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-6 sm:p-8 shadow-xs transition-all duration-300">
             <Form

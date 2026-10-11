@@ -1,7 +1,6 @@
 import multer from "multer";
 import path from "path";
 
-// CSV / Excel Upload (Memory Storage)
 export const uploadCsv = multer({
   storage: multer.memoryStorage(),
 
@@ -30,7 +29,7 @@ export const uploadCsv = multer({
   },
 });
 
-// Image Upload (Disk Storage)
+// Image Upload
 const imageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./public/temp");

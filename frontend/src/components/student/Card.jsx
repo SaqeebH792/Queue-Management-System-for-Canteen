@@ -8,7 +8,6 @@ function Card({ product }) {
     navigate(`/product/${product?._id}`);
   };
 
-  // Format price safely
   const formattedPrice =
     typeof product?.price === "number"
       ? `Rs:${product.price}`
@@ -22,7 +21,6 @@ function Card({ product }) {
       className="bg-white dark:bg-[#2B2D30] rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer group h-full border border-slate-200/60 dark:border-slate-800"
     >
       <div>
-        {/* Top Product Image Container */}
         <div className="relative w-full h-52 bg-slate-100 dark:bg-slate-800 overflow-hidden">
           {product?.image ? (
             <img
@@ -38,7 +36,6 @@ function Card({ product }) {
             </div>
           )}
 
-          {/* Rating or Best Seller Badge Overlay */}
           {product?.isBestSeller ? (
             <div className="absolute top-3 right-3 bg-[#C84B31] text-white px-3 py-1 rounded-full text-[11px] font-bold shadow-sm">
               Best Seller
@@ -51,9 +48,7 @@ function Card({ product }) {
           ) : null}
         </div>
 
-        {/* Card Content */}
         <div className="p-5 space-y-3">
-          {/* Header Row: Product Title & Price */}
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-serif font-bold text-[#2C1810] dark:text-white text-lg tracking-tight leading-snug line-clamp-1">
               {product?.name || "Unnamed Product"}
@@ -63,14 +58,12 @@ function Card({ product }) {
             </span>
           </div>
 
-          {/* Description */}
           {product?.description && (
             <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
               {product.description}
             </p>
           )}
 
-          {/* Category Badges */}
           {product?.category && (
             <div className="pt-1 flex flex-wrap gap-1.5">
               <span className="px-3 py-0.5 rounded-full bg-[#F3E5E1] dark:bg-[#35383C] text-[#A93226] dark:text-red-400 text-[10px] font-bold uppercase tracking-wider">
@@ -81,7 +74,6 @@ function Card({ product }) {
         </div>
       </div>
 
-      {/* Card Action Footer */}
       <div className="px-5 pb-5 pt-0 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/60 mt-2">
         <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 pt-3">
           <Clock size={14} className="text-slate-400" />
@@ -90,7 +82,7 @@ function Card({ product }) {
 
         <button
           type="button"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation();
             handleShowProduct();
           }}

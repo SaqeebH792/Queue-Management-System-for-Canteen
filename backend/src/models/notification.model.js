@@ -8,7 +8,6 @@ const notificationSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Who generated this notification
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -21,7 +20,6 @@ const notificationSchema = new mongoose.Schema(
       required: true,
     },
 
-    // Who will receive it
     recipient: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

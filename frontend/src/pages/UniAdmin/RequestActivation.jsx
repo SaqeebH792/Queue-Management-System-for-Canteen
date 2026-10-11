@@ -1,14 +1,12 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
 import axios from "../../api/axiosInstance";
 
-// Components
 import ActivationMainPanel from "../../components/university/ActivationMainPanel";
 import ActivationHistory from "../../components/university/RequestsHistory";
 import ActivationRequestSkeleton from "../../components/university/ActivationRequestSkeleton";
 
-// Icons
 import { ShieldCheck, Clock, History, RotateCw } from "lucide-react";
 
 function ActivationRequest() {
@@ -23,7 +21,6 @@ function ActivationRequest() {
   const abortControllerRef = useRef(null);
   const isMountedRef = useRef(true);
 
-  // Synchronize component mount lifecycle
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -116,7 +113,6 @@ function ActivationRequest() {
     return <ActivationRequestSkeleton />;
   }
 
-  // Calculated Stats
   const totalRequests = data.history?.length || 0;
   const isPending = data.status === "pending" || data.status === "requested";
   const isApproved = data.status === "active" || data.status === "approved";
@@ -128,7 +124,6 @@ function ActivationRequest() {
       </Helmet>
 
       <div className="max-w-7xl mx-auto space-y-6 text-slate-900 dark:text-zinc-100 transition-colors duration-200">
-        {/* Top Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-zinc-800">
           <div>
             <div className="flex items-center gap-2.5">
@@ -155,8 +150,6 @@ function ActivationRequest() {
             Refresh Status
           </button>
         </div>
-
-        {/* Quick Analytics Summary Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white dark:bg-[#1E1F21] border border-slate-200 dark:border-zinc-800 rounded-3xl p-4 flex items-center gap-3.5 shadow-sm dark:shadow-xl transition-colors">
             <div className="p-2.5 bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl text-slate-600 dark:text-zinc-300">
@@ -206,10 +199,7 @@ function ActivationRequest() {
             </div>
           </div>
         </div>
-
-        {/* Main Two-Column Panel Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Main Request Form & Status Action Area */}
           <div className="lg:col-span-8">
             <ActivationMainPanel
               status={data.status}
@@ -219,8 +209,6 @@ function ActivationRequest() {
               onCancel={cancelRequest}
             />
           </div>
-
-          {/* Historical Logs Sidebar */}
           <div className="lg:col-span-4">
             <ActivationHistory history={data.history} />
           </div>
@@ -229,5 +217,4 @@ function ActivationRequest() {
     </>
   );
 }
-
 export default ActivationRequest;

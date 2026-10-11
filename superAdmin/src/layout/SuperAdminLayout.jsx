@@ -5,12 +5,16 @@ import Navbar from "../components/Navbar";
 
 const SuperAdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  return <div className="page-shell">
-    <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-    <div className="lg:pl-[230px]">
-      <Navbar onMenu={() => setSidebarOpen(true)} />
-      <main className="min-h-[calc(100vh-62px)] px-4 py-6 sm:px-6 lg:px-7"><Outlet /></main>
+  return (
+    <div className="page-shell">
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="lg:pl-[230px]">
+        <Navbar onMenu={() => setSidebarOpen(true)} />
+        <main className="min-h-[calc(100vh-62px)] px-4 py-6 sm:px-6 lg:px-7">
+          <Outlet />
+        </main>
+      </div>
     </div>
-  </div>;
+  );
 };
 export default SuperAdminLayout;

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import OrderCard from "../../components/canteen/OrderCard";
 import { Search, Loader2, PackageX, RotateCw, ChevronRight, CheckCircle } from "lucide-react";
 import { updateOrderStatus, getOrders } from "../../routes/canteen.routes";
 import { toast } from "sonner";
@@ -37,7 +36,6 @@ function CanteenAdminDashboard() {
     return await getOrders(params);
   }, []);
 
-  console.log(orders);
   const loadOrders = async () => {
     try {
       setLoading(true);
@@ -118,7 +116,6 @@ function CanteenAdminDashboard() {
     });
   };
 
-  // Helper for rendering status pill colors
   const getStatusBadgeStyle = orderStatus => {
     switch (orderStatus?.toLowerCase()) {
       case "pending":
@@ -139,7 +136,6 @@ function CanteenAdminDashboard() {
     }
   };
 
-  // Maps current status to the next logical workflow step button
   const getNextStatusConfig = currentStatus => {
     switch (currentStatus?.toLowerCase()) {
       case "pending":
@@ -170,7 +166,7 @@ function CanteenAdminDashboard() {
         };
       case "delivered":
       case "completed":
-        return null; // Terminal state
+        return null;
       default:
         return {
           label: "Accept",
@@ -214,7 +210,6 @@ function CanteenAdminDashboard() {
 
       <div className="w-full min-h-screen font-sans text-slate-800 dark:text-zinc-100 p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-7xl mx-auto space-y-6">
-          {/* Header Title & Top Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -234,8 +229,6 @@ function CanteenAdminDashboard() {
               </button>
             </div>
           </div>
-
-          {/* Status Tab Filters */}
           <div className="flex flex-wrap items-center gap-2.5 pt-1">
             {statusOptions.map(tab => {
               const isActive = status === tab.value;
@@ -259,7 +252,6 @@ function CanteenAdminDashboard() {
             })}
           </div>
 
-          {/* Search Bar & Filter Options */}
           <form onSubmit={handleSearchSubmit} className="w-full">
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <div className="relative flex-1 w-full">
@@ -290,7 +282,6 @@ function CanteenAdminDashboard() {
             </div>
           </form>
 
-          {/* Orders Content Table */}
           {loading ? (
             <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 p-6 space-y-4">
               <DashboardHeaderSkeleton />
@@ -323,12 +314,13 @@ function CanteenAdminDashboard() {
                         className="divide-y divide-slate-100 dark:divide-zinc-800 text-xs sm:text-sm"
                       >
                         {orders.map(order => {
+                          console.log(order);
                           const orderIdFormatted = order._id
                             ? `#${order._id.slice(-4).toUpperCase()}`
                             : "N/A";
                           const itemCount = order.items?.length || 0;
                           const totalAmount = order.totalAmount
-                            ? `$${Number(order.totalAmount).toFixed(2)}`
+                            ? `${Number(order.totalAmount).toFixed(2)}`
                             : "$0.00";
                           const nextAction = getNextStatusConfig(order.status);
                           const isUpdating = updatingOrderId === order._id;
@@ -339,12 +331,9 @@ function CanteenAdminDashboard() {
                               variants={rowVariants}
                               className="hover:bg-slate-50/80 dark:hover:bg-zinc-800/40 transition-colors"
                             >
-                              {/* Order ID */}
                               <td className="py-4 px-6 font-bold text-slate-900 dark:text-white whitespace-nowrap">
                                 {orderIdFormatted}
                               </td>
-
-                              {/* Customer */}
                               <td className="py-4 px-6">
                                 <div className="flex items-center gap-3">
                                   {order.user?.avatar ? (
@@ -355,23 +344,22 @@ function CanteenAdminDashboard() {
                                     />
                                   ) : (
                                     <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 flex items-center justify-center font-bold text-xs uppercase">
-                                      {order.user?.name ? order.user.name.charAt(0) : "U"}
+                                      {order.student?.name ? order.student?.name.charAt(0) : "U"}
                                     </div>
                                   )}
                                   <div>
                                     <p className="font-semibold text-slate-900 dark:text-white leading-tight">
-                                      {order.user?.name || "Guest Customer"}
+                                      {order.student?.name || "Guest Customer"}
                                     </p>
-                                    {order.user?.email && (
+                                    {order.student?.email && (
                                       <p className="text-xs text-slate-400 mt-0.5">
-                                        {order.user.email}
+                                        {order.student.email}
                                       </p>
                                     )}
                                   </div>
                                 </div>
                               </td>
 
-                              {/* Items */}
                               <td className="py-4 px-6">
                                 <p className="font-medium text-slate-800 dark:text-zinc-200 line-clamp-1 max-w-[220px]">
                                   {order.items?.map(item => item.name || item.title).join(", ") ||
@@ -381,13 +369,9 @@ function CanteenAdminDashboard() {
                                   {itemCount} {itemCount === 1 ? "item" : "items"}
                                 </p>
                               </td>
-
-                              {/* Amount */}
                               <td className="py-4 px-6 font-bold text-slate-900 dark:text-white whitespace-nowrap">
-                                {totalAmount}
+                                {order.items?.map(item => `Rs: ${item?.totalAmount}`)}
                               </td>
-
-                              {/* Display Current Status Badge */}
                               <td className="py-4 px-6 whitespace-nowrap">
                                 <span
                                   className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeStyle(
@@ -397,8 +381,6 @@ function CanteenAdminDashboard() {
                                   {order.status || "Pending"}
                                 </span>
                               </td>
-
-                              {/* Actions Column (Cleaned) */}
                               <td className="py-4 px-6 text-right whitespace-nowrap">
                                 <div className="flex items-center justify-end">
                                   {nextAction ? (
@@ -451,8 +433,6 @@ function CanteenAdminDashboard() {
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              {/* Load More Action Button Container */}
               {hasNextPage && (
                 <div className="flex justify-center p-4 border-t border-slate-100 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-950/40">
                   <button
@@ -476,5 +456,4 @@ function CanteenAdminDashboard() {
     </>
   );
 }
-
 export default CanteenAdminDashboard;

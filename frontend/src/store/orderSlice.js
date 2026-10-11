@@ -1,42 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
 
-export const fetchMyOrders = createAsyncThunk(
-  "orders/fetchMyOrders",
-  async (_, thunkAPI) => {
-    try {
-      const response = await axiosInstance.get("users/myOrders", {
+export const fetchMyOrders = createAsyncThunk("orders/fetchMyOrders", async (_, thunkAPI) => {
+  try {
+    const response = await axiosInstance.get("users/myOrders", {
+      withCredentials: true,
+    });
+    return response.data.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch orders" });
+  }
+});
+
+export const cancelOrder = createAsyncThunk("/cancelOrder", async (orderId, thunkAPI) => {
+  try {
+    const response = await axiosInstance.patch(
+      `/users/cancelOrder/${orderId}`,
+      {},
+      {
         withCredentials: true,
-      });
-      return response.data.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: "Failed to fetch orders" },
-      );
-    }
-  },
-);
+      }
+    );
 
-export const cancelOrder = createAsyncThunk(
-  "/cancelOrder",
-  async (orderId, thunkAPI) => {
-    try {
-      const response = await axiosInstance.patch(
-        `/users/cancelOrder/${orderId}`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
-
-      return response.data.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || { message: "Failed to cancel order" },
-      );
-    }
-  },
-);
+    return response.data.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to cancel order" });
+  }
+});
 
 const initialState = {
   orders: [],
@@ -53,10 +43,9 @@ const orderSlice = createSlice({
       state.error = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      // Fetch Orders Handlers
-      .addCase(fetchMyOrders.pending, (state) => {
+      .addCase(fetchMyOrders.pending, state => {
         state.loading = true;
         state.error = null;
       })
@@ -69,16 +58,13 @@ const orderSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Cancel Order Handlers
       .addCase(cancelOrder.pending, (state, action) => {
         state.updatingOrderId = action.meta.arg;
         state.error = null;
       })
       .addCase(cancelOrder.fulfilled, (state, action) => {
         state.updatingOrderId = null;
-        const index = state.orders.findIndex(
-          (order) => order._id === action.payload._id,
-        );
+        const index = state.orders.findIndex(order => order._id === action.payload._id);
 
         if (index !== -1) {
           state.orders[index] = action.payload;

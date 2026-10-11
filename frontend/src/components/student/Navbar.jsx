@@ -51,12 +51,8 @@ function Navbar({ links = [], profileLinks = [], user }) {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FAF3F0]/90 dark:bg-[#1E1F21]/90 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/80 transition-colors duration-300">
-      <div
-        ref={mobileMenuRef}
-        className="max-w-7xl mx-auto px-6 transition-all duration-300"
-      >
+      <div ref={mobileMenuRef} className="max-w-7xl mx-auto px-6 transition-all duration-300">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
           <div className="flex items-center">
             <NavLink
               to="/"
@@ -66,26 +62,17 @@ function Navbar({ links = [], profileLinks = [], user }) {
             </NavLink>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             {links.map((link, index) => (
-              <NavLink
-                key={link.to || index}
-                to={link.to}
-                end={link.end}
-                className={linkStyle}
-              >
+              <NavLink key={link.to || index} to={link.to} end={link.end} className={linkStyle}>
                 {link.label}
               </NavLink>
             ))}
           </div>
 
-          {/* Right Actions */}
           <div className="flex items-center gap-3">
-            {/* Show Notification Bell only if logged in */}
             {user && <NotificationBell />}
 
-            {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
               aria-label="Toggle Theme"
@@ -98,7 +85,6 @@ function Navbar({ links = [], profileLinks = [], user }) {
               )}
             </button>
 
-            {/* Auth / Profile Area */}
             {!user ? (
               <NavLink
                 to="/student/login"
@@ -110,15 +96,11 @@ function Navbar({ links = [], profileLinks = [], user }) {
               <div ref={profileRef} className="relative ml-1">
                 <button
                   type="button"
-                  onClick={() => setIsProfileOpen((prev) => !prev)}
+                  onClick={() => setIsProfileOpen(prev => !prev)}
                   className="flex items-center justify-center w-10 h-10 rounded-full border-2 border-[#A93226]/40 hover:border-[#A93226] transition-all duration-200 overflow-hidden focus:outline-none active:scale-95 shadow-xs"
                 >
                   {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt="avatar"
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-[#A93226] text-white font-semibold flex items-center justify-center text-sm">
                       {getUserInitial()}
@@ -126,7 +108,6 @@ function Navbar({ links = [], profileLinks = [], user }) {
                   )}
                 </button>
 
-                {/* Profile Dropdown */}
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-3 w-60 bg-white/95 dark:bg-[#2B2D30]/95 backdrop-blur-md border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 transition-all">
                     <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800/80">
@@ -171,7 +152,7 @@ function Navbar({ links = [], profileLinks = [], user }) {
                             )}
                             {item.label}
                           </NavLink>
-                        ),
+                        )
                       )}
                     </div>
                   </div>
@@ -179,7 +160,6 @@ function Navbar({ links = [], profileLinks = [], user }) {
               </div>
             )}
 
-            {/* Mobile Menu Toggle Button (Visible ONLY when logged in) */}
             {user && (
               <div className="md:hidden ml-1">
                 <button
@@ -188,18 +168,13 @@ function Navbar({ links = [], profileLinks = [], user }) {
                   aria-label="Toggle Mobile Menu"
                   className="p-2.5 rounded-full text-slate-700 dark:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-all duration-200 focus:outline-none"
                 >
-                  {isMobileMenuOpen ? (
-                    <X className="w-6 h-6" />
-                  ) : (
-                    <Menu className="w-6 h-6" />
-                  )}
+                  {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
         {user && isMobileMenuOpen && (
           <div className="md:hidden border-t border-slate-200/80 dark:border-slate-800/80 py-4 space-y-3">
             <p className="px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">

@@ -39,13 +39,10 @@ function Products() {
   const [currentCursor, setCurrentCursor] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Track which product is pending deletion confirmation
   const [deletingId, setDeletingId] = useState(null);
 
-  // View switcher for mobile/desktop preference
-  const [viewMode, setViewMode] = useState("auto"); // "auto", "table", "grid"
+  const [viewMode, setViewMode] = useState("auto");
 
-  // Fetch products handler
   const fetchProducts = useCallback(
     async (filters = activeFilters, cursorData = null) => {
       setLoading(true);
@@ -82,7 +79,6 @@ function Products() {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Debounced Search Handler
   useEffect(() => {
     const timer = setTimeout(() => {
       if (search.trim() !== activeFilters.search) {
@@ -96,8 +92,6 @@ function Products() {
 
     return () => clearTimeout(timer);
   }, [search, activeFilters, fetchProducts]);
-
-  // ========================= CATEGORY =========================
 
   const handleCategoryChange = e => {
     const value = e.target.value;
@@ -124,8 +118,6 @@ function Products() {
     fetchProducts(filters, null);
   };
 
-  // ========================= PAGINATION =========================
-
   const handleNextPage = () => {
     if (!pagination.hasNextPage || !pagination.nextCursor) return;
     setCursorHistory(prev => [...prev, currentCursor]);
@@ -145,8 +137,6 @@ function Products() {
     fetchProducts(activeFilters, previousCursor);
   };
 
-  // ========================= DELETE =========================
-
   const handleDeleteProduct = async id => {
     toast.promise(deleteProduct(id), {
       loading: "Deleting product...",
@@ -162,7 +152,6 @@ function Products() {
     });
   };
 
-  // Status Badge Renderer using exact image status badge colors
   const renderStatusBadge = (status = "Active") => {
     switch (status?.toLowerCase()) {
       case "out of stock":
@@ -208,7 +197,6 @@ function Products() {
       </Helmet>
 
       <div className="w-full space-y-6 text-[#2D3748] dark:text-zinc-100 font-sans">
-        {/* Title Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1A202C] dark:text-white">
@@ -227,10 +215,7 @@ function Products() {
             <span>Add New Product</span>
           </Link>
         </div>
-
-        {/* Main Content Card Container */}
         <div className="bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-2xl shadow-xs overflow-hidden">
-          {/* Top Filter Controls Bar */}
           <div className="p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800/80">
             <div className="flex-1 w-full md:max-w-md">
               <div className="relative w-full">
@@ -279,8 +264,6 @@ function Products() {
               >
                 <SlidersHorizontal size={16} />
               </button>
-
-              {/* View Switcher Controls */}
               <div className="hidden sm:flex items-center border border-zinc-200 dark:border-zinc-700 rounded-full bg-[#F8F9FA] dark:bg-zinc-800 p-1">
                 <button
                   type="button"
@@ -309,8 +292,6 @@ function Products() {
               </div>
             </div>
           </div>
-
-          {/* Empty State */}
           {products.length === 0 ? (
             <div className="py-16 text-center px-4 space-y-3">
               <p className="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400">
@@ -327,7 +308,6 @@ function Products() {
             </div>
           ) : (
             <>
-              {/* Desktop / Tablet Table View */}
               <div
                 className={`${
                   viewMode === "grid"
@@ -355,7 +335,7 @@ function Products() {
                         key={product._id}
                         className="hover:bg-[#FFFBF7] dark:hover:bg-zinc-800/40 transition-colors duration-150"
                       >
-                        {/* Image */}
+                        {" "}
                         <td className="py-3.5 px-6">
                           {product.image ? (
                             <img
@@ -369,8 +349,6 @@ function Products() {
                             </div>
                           )}
                         </td>
-
-                        {/* Name & SKU */}
                         <td className="py-3.5 px-6">
                           <div className="font-bold text-[#1A202C] dark:text-white line-clamp-1">
                             {product.name}
@@ -381,21 +359,13 @@ function Products() {
                             </div>
                           )}
                         </td>
-
-                        {/* Category */}
                         <td className="py-3.5 px-6 text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
                           {product.category}
                         </td>
-
-                        {/* Price */}
                         <td className="py-3.5 px-6 font-extrabold text-[#1A202C] dark:text-white whitespace-nowrap">
                           Rs: {product.price}
                         </td>
-
-                        {/* Status Badge */}
                         <td className="py-3.5 px-6">{renderStatusBadge(product.status)}</td>
-
-                        {/* Action Column */}
                         <td className="py-3.5 px-6 text-right whitespace-nowrap">
                           {deletingId === product._id ? (
                             <div className="inline-flex items-center gap-1.5 bg-rose-500/10 p-1.5 rounded-full border border-rose-500/20">
@@ -441,8 +411,6 @@ function Products() {
                   </tbody>
                 </table>
               </div>
-
-              {/* Mobile Card Grid View */}
               <div
                 className={`${
                   viewMode === "table" ? "hidden" : viewMode === "grid" ? "grid" : "grid md:hidden"
@@ -527,8 +495,6 @@ function Products() {
               </div>
             </>
           )}
-
-          {/* Footer Controls */}
           <div className="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-zinc-100 dark:border-zinc-800/80 text-xs font-bold text-zinc-500 dark:text-zinc-400">
             <div className="text-center sm:text-left">
               Showing {products.length > 0 ? "1" : "0"} to {products.length} entries

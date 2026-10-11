@@ -1,9 +1,6 @@
-import React from "react";
-
 const UniversityDashboardSkeleton = () => {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-4 sm:space-y-6 p-2 sm:p-4 animate-pulse">
-      {/* Header Skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="space-y-2">
           <div className="h-6 sm:h-7 w-48 sm:w-56 bg-slate-200 dark:bg-slate-800 rounded-lg" />
@@ -11,9 +8,8 @@ const UniversityDashboardSkeleton = () => {
         </div>
       </div>
 
-      {/* Metric Cards Skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3].map(i => (
           <div
             key={i}
             className="bg-white dark:bg-[#131926] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3"
@@ -28,9 +24,7 @@ const UniversityDashboardSkeleton = () => {
         ))}
       </div>
 
-      {/* Directory Section Skeleton */}
       <div className="bg-white dark:bg-[#131926] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-xs overflow-hidden">
-        {/* Search and Filters Bar */}
         <div className="p-3 sm:p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="h-9 w-full sm:w-72 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
@@ -39,9 +33,8 @@ const UniversityDashboardSkeleton = () => {
           </div>
         </div>
 
-        {/* Mobile View: Skeleton Cards (< md screens) */}
         <div className="block md:hidden divide-y divide-slate-100 dark:divide-slate-800/40">
-          {[1, 2, 3, 4, 5].map((row) => (
+          {[1, 2, 3, 4, 5].map(row => (
             <div key={row} className="p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -62,7 +55,6 @@ const UniversityDashboardSkeleton = () => {
           ))}
         </div>
 
-        {/* Desktop View: Skeleton Table (>= md screens) */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -94,7 +86,7 @@ const UniversityDashboardSkeleton = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40">
-              {[1, 2, 3, 4, 5].map((row) => (
+              {[1, 2, 3, 4, 5].map(row => (
                 <tr key={row}>
                   <td className="p-4 text-center">
                     <div className="w-4 h-4 bg-slate-200 dark:bg-slate-800 rounded mx-auto" />
@@ -128,7 +120,6 @@ const UniversityDashboardSkeleton = () => {
           </table>
         </div>
 
-        {/* Footer Skeleton */}
         <div className="p-3 sm:p-4 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="h-3 w-28 bg-slate-200 dark:bg-slate-800 rounded order-2 sm:order-1" />
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end order-1 sm:order-2">

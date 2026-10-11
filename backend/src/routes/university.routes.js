@@ -2,7 +2,6 @@ import { Router } from "express";
 import { ROLES } from "../constants.js";
 // Models
 import { UniversityAdmin } from "../models/universityAdmin.model.js";
-import { CanteenAdmin } from "../models/CanteenAdmin.model.js";
 // Middlewares
 import { verifyJWT } from "../middlewares/verifyJWT.middleware.js";
 import { authorizeRole } from "../middlewares/authorizeRole.middleware.js";

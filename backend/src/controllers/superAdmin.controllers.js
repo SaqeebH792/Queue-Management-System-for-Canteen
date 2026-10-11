@@ -470,15 +470,6 @@ const deactivateUniversityAdmin = asyncHandler(async (req, res) => {
     admin.status = "inactive";
     await admin.save({ session });
 
-    // Optional: Deactivate the university as well
-    /*
-    await University.findByIdAndUpdate(
-      admin.universityId,
-      { status: "inactive" },
-      { session }
-    );
-    */
-
     // Create Notification
     const notificationPayload = {
       sender: req.user._id,

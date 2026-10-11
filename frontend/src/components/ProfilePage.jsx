@@ -5,10 +5,8 @@ import { Pencil, Loader2, User, ShieldCheck, Mail, Lock } from "lucide-react";
 import { requestOtp, updateProfile, updatePassword } from "../routes/student.routes";
 
 const ProfilePage = ({ user, isLoading }) => {
-  // Navigation tabs: "personal" | "security"
   const [activeTab, setActiveTab] = useState("personal");
 
-  // Email form state
   const [newEmail, setNewEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
@@ -16,19 +14,16 @@ const ProfilePage = ({ user, isLoading }) => {
   const [emailLoading, setEmailLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
-  // Password form state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  // Avatar state
   const [avatar, setAvatar] = useState(null);
   const [preview, setPreview] = useState(user?.avatar || "");
   const [avatarLoading, setAvatarLoading] = useState(false);
 
   const fileInputRef = useRef(null);
 
-  // Sync avatar preview with user prop or selected file
   useEffect(() => {
     if (!avatar) {
       setPreview(user?.avatar || "");
@@ -39,7 +34,6 @@ const ProfilePage = ({ user, isLoading }) => {
     return () => URL.revokeObjectURL(objectUrl);
   }, [avatar, user]);
 
-  // Countdown timer for OTP resend
   useEffect(() => {
     if (countdown <= 0) return;
     const interval = setInterval(() => {
@@ -106,7 +100,6 @@ const ProfilePage = ({ user, isLoading }) => {
   };
 
   const handleSavePersonalDetails = async () => {
-    // If user changed avatar
     if (avatar) {
       setAvatarLoading(true);
       const formData = new FormData();
@@ -123,7 +116,6 @@ const ProfilePage = ({ user, isLoading }) => {
       });
     }
 
-    // If user is attempting to update email
     if (newEmail.trim() && newEmail.toLowerCase() !== user?.email?.toLowerCase()) {
       if (!showOtpField) {
         toast.warning("Please click 'Get OTP' to send a verification code first.");
@@ -208,7 +200,6 @@ const ProfilePage = ({ user, isLoading }) => {
       </Helmet>
 
       <div className="w-full min-h-screen space-y-6 font-sans text-[#1E1F21] dark:text-zinc-100 transition-colors duration-200">
-        {/* Title and Subtitle */}
         <div className="pb-4 border-b border-zinc-200 dark:border-zinc-800">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1E1F21] dark:text-white">
             Update Profile
@@ -218,7 +209,6 @@ const ProfilePage = ({ user, isLoading }) => {
           </p>
         </div>
 
-        {/* Tab Navigation Pill Selector */}
         <div className="inline-flex p-1 bg-[#F3F4F6] dark:bg-[#2B2D30] rounded-full gap-1">
           <button
             type="button"
@@ -247,12 +237,9 @@ const ProfilePage = ({ user, isLoading }) => {
           </button>
         </div>
 
-        {/* Main Card Container */}
         <div className="w-full bg-white dark:bg-[#1E1F21] border border-zinc-100 dark:border-zinc-800 rounded-[28px] p-6 sm:p-8 shadow-xs space-y-6 transition-colors duration-200">
-          {/* TAB 1: Personal Info */}
           {activeTab === "personal" && (
             <div className="space-y-6">
-              {/* Profile Picture Box */}
               <div className="bg-[#F3F4F6] dark:bg-[#2B2D30] border border-zinc-200/80 dark:border-zinc-700/50 rounded-[22px] p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <div className="relative group shrink-0">
                   <div className="w-20 h-20 rounded-2xl overflow-hidden bg-zinc-200 dark:bg-zinc-700 relative ring-2 ring-white dark:ring-zinc-800">
@@ -298,9 +285,7 @@ const ProfilePage = ({ user, isLoading }) => {
                 </div>
               </div>
 
-              {/* Email Input Fields */}
               <div className="space-y-5">
-                {/* Official Email */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-extrabold uppercase tracking-wider  text-zinc-400">
                     Current Official Email
@@ -318,8 +303,6 @@ const ProfilePage = ({ user, isLoading }) => {
                     />
                   </div>
                 </div>
-
-                {/* New Email & OTP Request Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
                   <div className="md:col-span-2 space-y-2">
                     <label className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
@@ -355,8 +338,6 @@ const ProfilePage = ({ user, isLoading }) => {
                     )}
                   </button>
                 </div>
-
-                {/* OTP Verification Input */}
                 {showOtpField && (
                   <div className="space-y-2 animate-in fade-in duration-200">
                     <label className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
@@ -373,8 +354,6 @@ const ProfilePage = ({ user, isLoading }) => {
                   </div>
                 )}
               </div>
-
-              {/* Action Buttons */}
               <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-3">
                 <button
                   type="button"
@@ -408,11 +387,9 @@ const ProfilePage = ({ user, isLoading }) => {
             </div>
           )}
 
-          {/* TAB 2: Security */}
           {activeTab === "security" && (
             <form onSubmit={handleUpdatePassword} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Current Password */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
                     Current Password
@@ -431,8 +408,6 @@ const ProfilePage = ({ user, isLoading }) => {
                     />
                   </div>
                 </div>
-
-                {/* New Password */}
                 <div className="space-y-2">
                   <label className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
                     New Password
@@ -456,8 +431,6 @@ const ProfilePage = ({ user, isLoading }) => {
                   </p>
                 </div>
               </div>
-
-              {/* Action Buttons */}
               <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-end gap-3">
                 <button
                   type="button"
@@ -491,5 +464,4 @@ const ProfilePage = ({ user, isLoading }) => {
     </>
   );
 };
-
 export default ProfilePage;

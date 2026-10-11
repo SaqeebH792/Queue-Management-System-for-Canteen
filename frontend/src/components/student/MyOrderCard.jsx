@@ -7,8 +7,7 @@ function MyOrderCard({ order, isActiveOrder }) {
 
   const status = (order.status || "preparing").toLowerCase();
 
-  // Progress steps: Preparing (0%) -> Ready (50%) -> Delivered (100%)
-  const getProgressPercentage = (currStatus) => {
+  const getProgressPercentage = currStatus => {
     switch (currStatus) {
       case "ready":
         return "50%";
@@ -23,17 +22,14 @@ function MyOrderCard({ order, isActiveOrder }) {
     }
   };
 
-  const formattedDate = new Date(
-    order.createdAt || Date.now(),
-  ).toLocaleDateString("en-US", {
+  const formattedDate = new Date(order.createdAt || Date.now()).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
 
-  const itemsText = order.items?.map((i) => i.name).join(", ");
-  const itemCount =
-    order.items?.reduce((acc, i) => acc + (i.quantity || 1), 0) || 0;
+  const itemsText = order.items?.map(i => i.name).join(", ");
+  const itemCount = order.items?.reduce((acc, i) => acc + (i.quantity || 1), 0) || 0;
 
   if (isActiveOrder) {
     return (
@@ -77,7 +73,6 @@ function MyOrderCard({ order, isActiveOrder }) {
             </div>
           </div>
 
-          {/* Items List */}
           <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 space-y-2 text-xs">
             {order.items?.map((item, idx) => (
               <div
@@ -94,14 +89,11 @@ function MyOrderCard({ order, isActiveOrder }) {
             ))}
           </div>
 
-          {/* Progress Tracker (Preparing -> Ready -> Delivered) */}
           <div className="space-y-2 pt-2">
             <div className="flex justify-between text-[11px] font-extrabold text-zinc-400">
               <span
                 className={
-                  ["preparing", "ready", "delivered", "completed"].includes(
-                    status,
-                  )
+                  ["preparing", "ready", "delivered", "completed"].includes(status)
                     ? "text-[#167CC2]"
                     : ""
                 }
@@ -110,20 +102,12 @@ function MyOrderCard({ order, isActiveOrder }) {
               </span>
               <span
                 className={
-                  ["ready", "delivered", "completed"].includes(status)
-                    ? "text-[#167CC2]"
-                    : ""
+                  ["ready", "delivered", "completed"].includes(status) ? "text-[#167CC2]" : ""
                 }
               >
                 Ready
               </span>
-              <span
-                className={
-                  ["delivered", "completed"].includes(status)
-                    ? "text-[#167CC2]"
-                    : ""
-                }
-              >
+              <span className={["delivered", "completed"].includes(status) ? "text-[#167CC2]" : ""}>
                 Delivered
               </span>
             </div>
@@ -148,7 +132,6 @@ function MyOrderCard({ order, isActiveOrder }) {
     );
   }
 
-  // Past Orders Card
   return (
     <>
       <div className="bg-white dark:bg-[#2B2D30] rounded-[28px] p-4 sm:p-5 flex flex-col justify-between gap-4 shadow-xs border border-slate-100 dark:border-zinc-800">
@@ -175,7 +158,6 @@ function MyOrderCard({ order, isActiveOrder }) {
           )}
         </div>
 
-        {/* Footer: Delivered / Status Badge + Show QR */}
         <div className="flex items-center justify-between gap-2 border-t pt-3 border-zinc-100 dark:border-zinc-800">
           <div>
             {status === "cancelled" ? (

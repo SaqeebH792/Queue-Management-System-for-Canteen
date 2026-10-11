@@ -1,7 +1,7 @@
 import { model } from "mongoose";
 // Models
 import { UniversityAdmin } from "../models/universityAdmin.model.js";
-import { CanteenAdmin } from "../models/CanteenAdmin.model.js";
+import { CanteenAdmin } from "../models/canteenAdmin.model.js";
 import { Student } from "../models/student.model.js";
 import { SuperAdmin } from "../models/superAdmin.model.js";
 // Utils
@@ -12,6 +12,7 @@ import { ROLES } from "../constants.js";
 import jwt from "jsonwebtoken";
 
 const getModelByRole = role => {
+  console.log("reached here");
   switch (role) {
     case ROLES.UNIVERSITY_ADMIN:
       return UniversityAdmin;
@@ -30,7 +31,7 @@ const getModelByRole = role => {
 
 // Middleware for Protected Routes
 const verifyJWT = asyncHandler(async (req, res, next) => {
-  console.log(req);
+  console.log("Reaches here", req);
   const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
     throw new apiError(401, "Unauthorized at jwt");

@@ -17,23 +17,17 @@ const Form = ({
 
   return (
     <div className="w-full space-y-6 font-sans text-[#1E1F21] dark:text-zinc-100">
-      {/* Title */}
       <div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E1F21] dark:text-white tracking-tight">
           {title}
         </h2>
       </div>
 
-      {/* Form Elements */}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-4">
-          {fields.map((field) => {
+          {fields.map(field => {
             const isPassword = field.type === "password";
-            const inputType = isPassword
-              ? showPassword
-                ? "text"
-                : "password"
-              : field.type;
+            const inputType = isPassword ? (showPassword ? "text" : "password") : field.type;
 
             return (
               <div key={field.name} className="space-y-1.5">
@@ -64,7 +58,6 @@ const Form = ({
                   />
                 ) : (
                   <div className="relative flex items-center">
-                    {/* Left Input Icon */}
                     <span className="absolute left-4 text-zinc-400 pointer-events-none">
                       {field.type === "email" ? (
                         <Mail size={16} />
@@ -86,18 +79,13 @@ const Form = ({
                       } ${isPassword ? "pr-11" : "pr-4"}`}
                     />
 
-                    {/* Password Show/Hide Toggle Button */}
                     {isPassword && (
                       <button
                         type="button"
-                        onClick={() => setShowPassword((prev) => !prev)}
+                        onClick={() => setShowPassword(prev => !prev)}
                         className="absolute right-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors cursor-pointer"
                       >
-                        {showPassword ? (
-                          <EyeOff size={16} />
-                        ) : (
-                          <Eye size={16} />
-                        )}
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     )}
                   </div>
@@ -107,7 +95,6 @@ const Form = ({
           })}
         </div>
 
-        {/* Submit Button */}
         <div className="pt-2">
           <button
             type="submit"

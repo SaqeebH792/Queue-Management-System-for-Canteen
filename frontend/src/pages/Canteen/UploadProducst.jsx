@@ -16,13 +16,11 @@ function UploadProducts() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  // States
   const [formData, setFormData] = useState(initialFormState);
   const [imagePreview, setImagePreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: null, message: "" });
 
-  // Memory-Safe Image Preview Hook
   useEffect(() => {
     if (!formData.image) {
       setImagePreview("");
@@ -134,7 +132,6 @@ function UploadProducts() {
       <div className="w-full min-h-screen font-sans text-slate-800 dark:text-zinc-100">
         <div className="w-full max-w-7xl mx-auto space-y-6">
           <form onSubmit={handleSubmit}>
-            {/* Top Breadcrumb & Action Header Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
                 <Link
@@ -176,8 +173,6 @@ function UploadProducts() {
                 </button>
               </div>
             </div>
-
-            {/* Status Alert Banner */}
             {status.message && (
               <div
                 className={`mb-6 p-4 rounded-2xl border flex items-start gap-3 transition-all ${
@@ -202,17 +197,12 @@ function UploadProducts() {
               </div>
             )}
 
-            {/* Responsive Layout Grid */}
             <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 items-start">
-              {/* Left Main Column (Forms) */}
               <div className="w-full lg:col-span-2 space-y-6 order-2 lg:order-1">
-                {/* Basic Information Card */}
                 <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs space-y-5">
                   <h2 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-zinc-800 pb-3">
                     Basic Information
                   </h2>
-
-                  {/* Name & Category in Same Row with Equal Width */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1.5">
@@ -287,8 +277,6 @@ function UploadProducts() {
                   </div>
                 </div>
               </div>
-
-              {/* Product Image Card */}
               <div className="w-full space-y-6 order-1 lg:order-2">
                 <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs space-y-4">
                   <h2 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-zinc-800 pb-3">
@@ -337,8 +325,6 @@ function UploadProducts() {
                       </p>
                     </label>
                   )}
-
-                  {/* Image Guidelines Footer */}
                   <div className="pt-2 border-t border-slate-100 dark:border-zinc-800 text-xs text-slate-500 dark:text-zinc-400 space-y-1.5">
                     <p className="font-bold text-slate-900 dark:text-zinc-300">Image Guidelines</p>
                     <ul className="list-disc pl-4 space-y-1 text-[11px] font-medium leading-relaxed">
@@ -356,5 +342,4 @@ function UploadProducts() {
     </>
   );
 }
-
 export default UploadProducts;

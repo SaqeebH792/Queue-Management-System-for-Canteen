@@ -89,15 +89,11 @@ uploadedStudentSchema.index(
   }
 );
 
-// For getAllStudents cursor pagination
-
 uploadedStudentSchema.index({
   universityId: 1,
   createdAt: -1,
   _id: -1,
 });
-
-// Filtering optimization
 
 uploadedStudentSchema.index({
   universityId: 1,

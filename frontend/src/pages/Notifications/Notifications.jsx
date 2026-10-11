@@ -15,12 +15,12 @@ import NotificationItem from "./NotificationItem";
 
 function Notifications() {
   const dispatch = useDispatch();
-  const { items = [], loading } = useSelector((state) => state.notification);
+  const { items = [], loading } = useSelector(state => state.notification);
 
   useEffect(() => {
     dispatch(fetchNotifications());
 
-    const handleNewNotification = (notification) => {
+    const handleNewNotification = notification => {
       dispatch(addNotification(notification));
       toast.info(notification.message || "You have a new notification!", {
         icon: "🔔",
@@ -38,7 +38,7 @@ function Notifications() {
     dispatch(readAllNotifications());
   };
 
-  const unreadCount = items.filter((item) => !item.isRead).length;
+  const unreadCount = items.filter(item => !item.isRead).length;
 
   if (loading && items.length === 0) {
     return (
@@ -56,7 +56,7 @@ function Notifications() {
           </div>
 
           <div className="space-y-3">
-            {[1, 2, 3, 4].map((item) => (
+            {[1, 2, 3, 4].map(item => (
               <div
                 key={item}
                 className="p-4 rounded-2xl bg-[#F3F4F6] dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-4"
@@ -82,9 +82,8 @@ function Notifications() {
         <title>Notifications | Portal</title>
       </Helmet>
 
-      <div className="w-full min-h-screen text-[#1E1F21] dark:text-zinc-100 transition-colors duration-300 px-4 sm:px-6 lg:px-8 font-sans pt-28 sm:pt-22">
-        <div className="w-full max-w-full bg-white dark:bg-[#1E1F21] border border-zinc-100 dark:border-zinc-800 rounded-[28px] p-6 sm:p-8 shadow-xs transition-all duration-300">
-          {/* Header */}
+      <div className="w-full min-h-screen text-[#1E1F21] dark:text-zinc-100 transition-colors duration-300 px-4 sm:px-6 lg:px-8 font-sans pt-6">
+        <div className="w-full max-w-full bg-white dark:bg-[#1E1F21] border border-zinc-100 dark:border-zinc-800 rounded-[28px] p-6 sm:p-8 shadow-xs transition-all duration-300 mt-[10%]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800/80 mb-6">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-full bg-[#167CC2]/10 text-[#167CC2] shrink-0">
@@ -119,7 +118,6 @@ function Notifications() {
             )}
           </div>
 
-          {/* List or Empty View */}
           {items.length === 0 ? (
             <div className="py-20 text-center flex flex-col items-center justify-center">
               <div className="p-5 rounded-full bg-[#F3F4F6] dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 mb-4 border border-zinc-200/50 dark:border-zinc-700/50">
@@ -131,17 +129,13 @@ function Notifications() {
               </h2>
 
               <p className="text-xs sm:text-sm font-medium text-zinc-500 dark:text-zinc-400 max-w-sm leading-relaxed">
-                Order status logs and system notifications will appear here in
-                real time.
+                Order status logs and system notifications will appear here in real time.
               </p>
             </div>
           ) : (
             <div className="space-y-3 w-full">
-              {items.map((notification) => (
-                <NotificationItem
-                  key={notification._id}
-                  notification={notification}
-                />
+              {items.map(notification => (
+                <NotificationItem key={notification._id} notification={notification} />
               ))}
             </div>
           )}

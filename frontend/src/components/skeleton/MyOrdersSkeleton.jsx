@@ -1,7 +1,6 @@
 export const ActiveOrderSkeleton = () => {
   return (
     <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-5 sm:p-6 shadow-xs space-y-6 border border-slate-100 dark:border-zinc-800 animate-pulse">
-      {/* Top Bar Skeleton */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -18,7 +17,6 @@ export const ActiveOrderSkeleton = () => {
         </div>
       </div>
 
-      {/* Items List Skeleton */}
       <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4 space-y-3">
         <div className="flex justify-between items-center">
           <div className="h-4 w-32 bg-slate-100 dark:bg-zinc-800/60 rounded-md" />
@@ -29,8 +27,6 @@ export const ActiveOrderSkeleton = () => {
           <div className="h-4 w-14 bg-slate-200 dark:bg-zinc-800 rounded-md" />
         </div>
       </div>
-
-      {/* Progress Bar Skeleton */}
       <div className="space-y-2 pt-2">
         <div className="flex justify-between">
           <div className="h-3 w-14 bg-slate-200 dark:bg-zinc-800 rounded-md" />
@@ -43,7 +39,6 @@ export const ActiveOrderSkeleton = () => {
   );
 };
 
-// Past Order Skeleton aligned with Past MyOrderCard
 export const PastOrderSkeleton = () => {
   return (
     <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-4 sm:p-5 flex flex-col justify-between gap-4 shadow-xs border border-slate-100 dark:border-zinc-800 animate-pulse">
@@ -58,7 +53,6 @@ export const PastOrderSkeleton = () => {
         <div className="h-4 w-48 bg-slate-100 dark:bg-zinc-800/60 rounded-md" />
       </div>
 
-      {/* Footer Skeleton */}
       <div className="flex items-center justify-between gap-2 border-t pt-3 border-zinc-100 dark:border-zinc-800">
         <div className="h-6 w-24 bg-slate-200 dark:bg-zinc-800 rounded-full" />
         <div className="h-7 w-24 bg-slate-200 dark:bg-zinc-800 rounded-full" />
@@ -67,17 +61,14 @@ export const PastOrderSkeleton = () => {
   );
 };
 
-// Full Page Skeleton Container
 export const MyOrdersSkeleton = () => {
   return (
     <div className="space-y-10">
-      {/* Active Orders Skeleton Block */}
       <section className="space-y-4">
         <div className="h-6 w-32 bg-slate-200 dark:bg-zinc-800 rounded-md animate-pulse" />
         <ActiveOrderSkeleton />
       </section>
 
-      {/* Past Orders Skeleton Block */}
       <section className="space-y-4">
         <div className="h-6 w-32 bg-slate-200 dark:bg-zinc-800 rounded-md animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

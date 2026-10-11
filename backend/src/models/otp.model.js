@@ -33,7 +33,6 @@ const otpSchema = new mongoose.Schema(
       },
     },
 
-    // ===== Student Registration Fields =====
     registrationNo: {
       type: String,
       trim: true,

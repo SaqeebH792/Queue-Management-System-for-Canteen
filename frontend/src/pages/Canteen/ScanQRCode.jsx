@@ -13,16 +13,13 @@ function VerifyOrder() {
   const [orderId, setOrderId] = useState("");
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null); // null | true | false
+  const [success, setSuccess] = useState(null);
   const [message, setMessage] = useState("");
-
-  // Stop & Cleanup Camera
   const stopScanner = useCallback(async () => {
     if (!scannerRef.current) return;
 
     try {
       const state = scannerRef.current.getState();
-      // State 2 = SCANNING, State 3 = PAUSED
       if (state === 2 || state === 3) {
         await scannerRef.current.stop();
       }
@@ -34,7 +31,6 @@ function VerifyOrder() {
     }
   }, []);
 
-  // Verify Order API
   const verifyOrder = useCallback(async payload => {
     setLoading(true);
     setSuccess(null);
@@ -71,7 +67,6 @@ function VerifyOrder() {
     );
   }, []);
 
-  // Handle Camera Open / Close Actions
   function handleOpenCamera() {
     setMessage("");
     setSuccess(null);
@@ -83,7 +78,6 @@ function VerifyOrder() {
     setCameraOpen(false);
   }
 
-  // Camera Scanner Lifecycle
   useEffect(() => {
     if (!cameraOpen) return;
 
@@ -144,7 +138,6 @@ function VerifyOrder() {
     };
   }, [cameraOpen, stopScanner, verifyOrder]);
 
-  // Manual Verification
   function handleSubmit(e) {
     e.preventDefault();
     if (!orderId.trim() || !token.trim()) return;
@@ -168,7 +161,6 @@ function VerifyOrder() {
       </Helmet>
 
       <div className="w-full text-[#2D3748] dark:text-zinc-100 font-sans space-y-6">
-        {/* Header Title & Scanner Status Pill */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#1A202C] dark:text-white leading-tight">
@@ -189,7 +181,6 @@ function VerifyOrder() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Camera Viewport Section */}
           <div className="lg:col-span-7 bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xs transition-all duration-300">
             <div className="relative rounded-2xl overflow-hidden bg-zinc-900 min-h-80 flex flex-col items-center justify-center border border-zinc-800">
               {!cameraOpen ? (
@@ -210,8 +201,6 @@ function VerifyOrder() {
               ) : (
                 <div className="relative w-full h-full min-h-80 flex items-center justify-center">
                   <div id="reader" className="w-full h-full" />
-
-                  {/* Camera Frame Target Overlay */}
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                     <div className="w-60 h-60 border-2 border-[#FF6B00]/50 rounded-2xl relative">
                       <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-[#FF6B00] rounded-tl-lg" />
@@ -234,8 +223,6 @@ function VerifyOrder() {
               </button>
             )}
           </div>
-
-          {/* Manual Override & Verification Result Section */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xs transition-all duration-300">
               <span className="block text-xs font-bold uppercase tracking-wider text-[#FF6B00] mb-4">
@@ -285,8 +272,6 @@ function VerifyOrder() {
                 </button>
               </form>
             </div>
-
-            {/* Live Output Feed Status Card */}
             <div className="bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xs transition-all duration-300">
               {message ? (
                 <div
@@ -327,5 +312,4 @@ function VerifyOrder() {
     </>
   );
 }
-
 export default VerifyOrder;

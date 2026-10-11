@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { ROLES } from "../constants.js";
 import { authPlugin } from "../utils/authPlugin.js";
 
@@ -11,10 +9,7 @@ const universityAdminSchema = new mongoose.Schema(
       ref: "University",
       required: true,
     },
-    universityName: {
-      type: String,
-      required: true,
-    },
+
     email: {
       type: String,
       required: true,

@@ -5,14 +5,17 @@ import { addNotification } from "../features/notifications/notificationSlice";
 
 const NotificationListener = () => {
   const dispatch = useDispatch();
-  const { superAdmin } = useSelector((s) => s.auth);
+  const { superAdmin } = useSelector(s => s.auth);
   useEffect(() => {
     if (!superAdmin?._id) return;
     socket.connect();
     socket.emit("join", superAdmin._id);
-    const handler = (notification) => dispatch(addNotification(notification));
+    const handler = notification => dispatch(addNotification(notification));
     socket.on("newNotification", handler);
-    return () => { socket.off("newNotification", handler); socket.disconnect(); };
+    return () => {
+      socket.off("newNotification", handler);
+      socket.disconnect();
+    };
   }, [dispatch, superAdmin?._id]);
   return null;
 };

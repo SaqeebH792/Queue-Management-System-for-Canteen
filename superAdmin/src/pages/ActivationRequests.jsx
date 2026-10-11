@@ -1,34 +1,332 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, ClipboardCheck, Eye, Filter, Loader2, Search, X } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardCheck,
+  Eye,
+  Filter,
+  Loader2,
+  Search,
+  X,
+} from "lucide-react";
 import { getActivationRequests, updateActivationRequest } from "../features/activationRequestApi";
 import PageHeader from "../components/PageHeader";
 import StatusPill from "../components/StatusPill";
 import EmptyState from "../components/EmptyState";
 
 const ActivationRequests = () => {
-  const [requests,setRequests]=useState([]); const [pagination,setPagination]=useState(null); const [loading,setLoading]=useState(true); const [error,setError]=useState("");
-  const [page,setPage]=useState(1); const [status,setStatus]=useState(""); const [search,setSearch]=useState(""); const [query,setQuery]=useState("");
-  const [selected,setSelected]=useState(null); const [rejectId,setRejectId]=useState(null); const [reason,setReason]=useState(""); const [saving,setSaving]=useState(false);
+  const [requests, setRequests] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [status, setStatus] = useState("");
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState(null);
+  const [rejectId, setRejectId] = useState(null);
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const fetchRequests = async () => { try { setLoading(true); setError(""); const r=await getActivationRequests({page,limit:10,search:query,status}); setRequests(r.data.requests||[]); setPagination(r.data.pagination); } catch(e){setError(e.response?.data?.message||"Failed to load activation requests");} finally{setLoading(false);} };
-  useEffect(()=>{fetchRequests();},[page,status,query]);
-  const submitSearch=(e)=>{e.preventDefault();setPage(1);setQuery(search.trim());};
-  const update=async(id,newStatus)=>{try{setSaving(true);const data={status:newStatus};if(newStatus==='rejected')data.rejectionReason=reason.trim();await updateActivationRequest(id,data);setRejectId(null);setReason("");setSelected(null);await fetchRequests();}catch(e){setError(e.response?.data?.message||"Unable to update request");}finally{setSaving(false);}};
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const r = await getActivationRequests({ page, limit: 10, search: query, status });
+      setRequests(r.data.requests || []);
+      setPagination(r.data.pagination);
+    } catch (e) {
+      setError(e.response?.data?.message || "Failed to load activation requests");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchRequests();
+  }, [page, status, query]);
+  const submitSearch = e => {
+    e.preventDefault();
+    setPage(1);
+    setQuery(search.trim());
+  };
+  const update = async (id, newStatus) => {
+    try {
+      setSaving(true);
+      const data = { status: newStatus };
+      if (newStatus === "rejected") data.rejectionReason = reason.trim();
+      await updateActivationRequest(id, data);
+      setRejectId(null);
+      setReason("");
+      setSelected(null);
+      await fetchRequests();
+    } catch (e) {
+      setError(e.response?.data?.message || "Unable to update request");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  return <div className="fade-in">
-    <PageHeader title="Activation Requests" description="Review university activation requests submitted by University Admins." action={<div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400"><ClipboardCheck size={15} className="text-amber-400"/> {pagination?.totalRequests ?? 0} requests</div>} />
-    <div className="panel mb-4 p-4"><div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"><form onSubmit={submitSearch} className="flex flex-1 gap-2"><div className="relative max-w-lg flex-1"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"/><input className="input-dark pl-9" placeholder="Search university or admin..." value={search} onChange={e=>setSearch(e.target.value)}/></div><button className="btn-primary">Search</button></form><div className="flex items-center gap-2"><Filter size={15} className="text-slate-600"/><select className="select-dark w-[150px]" value={status} onChange={e=>{setPage(1);setStatus(e.target.value)}}><option value="">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option></select></div></div></div>
-    {error && <div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">{error}</div>}
-    <div className="panel overflow-hidden">
-      <div className="overflow-x-auto"><table className="w-full min-w-[850px] text-left"><thead><tr className="bg-white/[.02] text-[10px] uppercase tracking-[.08em] text-slate-600"><th className="px-5 py-3 font-semibold">University</th><th className="px-5 py-3 font-semibold">Requested by</th><th className="px-5 py-3 font-semibold">Status</th><th className="px-5 py-3 font-semibold">Submitted</th><th className="px-5 py-3 text-right font-semibold">Action</th></tr></thead><tbody>{loading ? <tr><td colSpan="5"><div className="flex h-64 items-center justify-center"><Loader2 className="animate-spin text-blue-400"/></div></td></tr> : requests.length===0 ? <tr><td colSpan="5"><EmptyState message="No activation requests match your filters"/></td></tr> : requests.map(r=><tr key={r._id} className="table-row text-sm"><td className="px-5 py-4"><div className="flex items-center gap-3"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-xs font-bold text-blue-400">{r.university?.name?.slice(0,1)?.toUpperCase()||"U"}</div><div><p className="font-semibold text-slate-200">{r.university?.name||"—"}</p><p className="mt-0.5 text-xs text-slate-600">{r.university?.email||"—"}</p></div></div></td><td className="px-5 py-4"><p className="font-medium text-slate-300">{r.requestedBy?.fullName||"—"}</p><p className="mt-0.5 text-xs text-slate-600">{r.requestedBy?.email||"—"}</p></td><td className="px-5 py-4"><StatusPill status={r.status}/></td><td className="px-5 py-4 text-xs text-slate-500">{r.createdAt?new Date(r.createdAt).toLocaleDateString():"—"}</td><td className="px-5 py-4"><div className="flex justify-end gap-2">{r.status==='pending' ? <><button disabled={saving} onClick={()=>update(r._id,'approved')} className="btn-success"><Check size={14} className="mr-1 inline"/>Approve</button><button disabled={saving} onClick={()=>{setRejectId(r._id);setSelected(r)}} className="btn-danger"><X size={14} className="mr-1 inline"/>Reject</button></> : <button onClick={()=>setSelected(r)} className="btn-secondary flex items-center gap-1.5"><Eye size={14}/>View</button>}</div></td></tr>)}</tbody></table></div>
-      <div className="flex items-center justify-between border-t border-white/[.06] px-5 py-3"><p className="text-xs text-slate-600">Page {pagination?.currentPage||1} of {pagination?.totalPages||1}</p><div className="flex gap-2"><button disabled={!pagination?.hasPrevPage} onClick={()=>setPage(p=>p-1)} className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:cursor-not-allowed disabled:opacity-30"><ChevronLeft size={14}/>Prev</button><button disabled={!pagination?.hasNextPage} onClick={()=>setPage(p=>p+1)} className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:cursor-not-allowed disabled:opacity-30">Next<ChevronRight size={14}/></button></div></div>
+  return (
+    <div className="fade-in">
+      <PageHeader
+        title="Activation Requests"
+        description="Review university activation requests submitted by University Admins."
+        action={
+          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400">
+            <ClipboardCheck size={15} className="text-amber-400" /> {pagination?.totalRequests ?? 0}{" "}
+            requests
+          </div>
+        }
+      />
+      <div className="panel mb-4 p-4">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+          <form onSubmit={submitSearch} className="flex flex-1 gap-2">
+            <div className="relative max-w-lg flex-1">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"
+              />
+              <input
+                className="input-dark pl-9"
+                placeholder="Search university or admin..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="btn-primary">Search</button>
+          </form>
+          <div className="flex items-center gap-2">
+            <Filter size={15} className="text-slate-600" />
+            <select
+              className="select-dark w-[150px]"
+              value={status}
+              onChange={e => {
+                setPage(1);
+                setStatus(e.target.value);
+              }}
+            >
+              <option value="">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      {error && (
+        <div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+          {error}
+        </div>
+      )}
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[850px] text-left">
+            <thead>
+              <tr className="bg-white/[.02] text-[10px] uppercase tracking-[.08em] text-slate-600">
+                <th className="px-5 py-3 font-semibold">University</th>
+                <th className="px-5 py-3 font-semibold">Requested by</th>
+                <th className="px-5 py-3 font-semibold">Status</th>
+                <th className="px-5 py-3 font-semibold">Submitted</th>
+                <th className="px-5 py-3 text-right font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5">
+                    <div className="flex h-64 items-center justify-center">
+                      <Loader2 className="animate-spin text-blue-400" />
+                    </div>
+                  </td>
+                </tr>
+              ) : requests.length === 0 ? (
+                <tr>
+                  <td colSpan="5">
+                    <EmptyState message="No activation requests match your filters" />
+                  </td>
+                </tr>
+              ) : (
+                requests.map(r => (
+                  <tr key={r._id} className="table-row text-sm">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-xs font-bold text-blue-400">
+                          {r.university?.name?.slice(0, 1)?.toUpperCase() || "U"}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-200">
+                            {r.university?.name || "—"}
+                          </p>
+                          <p className="mt-0.5 text-xs text-slate-600">
+                            {r.university?.email || "—"}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="font-medium text-slate-300">{r.requestedBy?.fullName || "—"}</p>
+                      <p className="mt-0.5 text-xs text-slate-600">{r.requestedBy?.email || "—"}</p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <StatusPill status={r.status} />
+                    </td>
+                    <td className="px-5 py-4 text-xs text-slate-500">
+                      {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex justify-end gap-2">
+                        {r.status === "pending" ? (
+                          <>
+                            <button
+                              disabled={saving}
+                              onClick={() => update(r._id, "approved")}
+                              className="btn-success"
+                            >
+                              <Check size={14} className="mr-1 inline" />
+                              Approve
+                            </button>
+                            <button
+                              disabled={saving}
+                              onClick={() => {
+                                setRejectId(r._id);
+                                setSelected(r);
+                              }}
+                              className="btn-danger"
+                            >
+                              <X size={14} className="mr-1 inline" />
+                              Reject
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => setSelected(r)}
+                            className="btn-secondary flex items-center gap-1.5"
+                          >
+                            <Eye size={14} />
+                            View
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex items-center justify-between border-t border-white/[.06] px-5 py-3">
+          <p className="text-xs text-slate-600">
+            Page {pagination?.currentPage || 1} of {pagination?.totalPages || 1}
+          </p>
+          <div className="flex gap-2">
+            <button
+              disabled={!pagination?.hasPrevPage}
+              onClick={() => setPage(p => p - 1)}
+              className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              <ChevronLeft size={14} />
+              Prev
+            </button>
+            <button
+              disabled={!pagination?.hasNextPage}
+              onClick={() => setPage(p => p + 1)}
+              className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              Next
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {(rejectId || selected) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/[.06] px-5 py-4">
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  {rejectId ? "Reject activation request" : "Request details"}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  {selected?.university?.name || "University activation"}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setRejectId(null);
+                  setSelected(null);
+                }}
+                className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-white"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            {rejectId ? (
+              <div className="p-5">
+                <label className="text-xs font-medium text-slate-400">
+                  Rejection reason <span className="text-slate-600">(optional, max 500)</span>
+                </label>
+                <textarea
+                  maxLength={500}
+                  rows={5}
+                  className="input-dark mt-2 h-auto resize-none py-3"
+                  placeholder="Explain why the activation request is being rejected..."
+                  value={reason}
+                  onChange={e => setReason(e.target.value)}
+                />
+                <div className="mt-2 text-right text-[10px] text-slate-600">
+                  {reason.length}/500
+                </div>
+                <div className="mt-5 flex justify-end gap-2">
+                  <button onClick={() => setRejectId(null)} className="btn-secondary">
+                    Cancel
+                  </button>
+                  <button
+                    disabled={saving}
+                    onClick={() => update(rejectId, "rejected")}
+                    className="btn-danger"
+                  >
+                    {saving ? "Rejecting..." : "Confirm rejection"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4 p-5 text-sm">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg bg-white/[.025] p-3">
+                    <p className="text-[10px] uppercase text-slate-600">University</p>
+                    <p className="mt-1 font-medium text-slate-200">{selected?.university?.name}</p>
+                    <p className="text-xs text-slate-600">{selected?.university?.email}</p>
+                  </div>
+                  <div className="rounded-lg bg-white/[.025] p-3">
+                    <p className="text-[10px] uppercase text-slate-600">Status</p>
+                    <div className="mt-2">
+                      <StatusPill status={selected?.status} />
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-lg bg-white/[.025] p-3">
+                  <p className="text-[10px] uppercase text-slate-600">Requested by</p>
+                  <p className="mt-1 font-medium text-slate-200">
+                    {selected?.requestedBy?.fullName}
+                  </p>
+                  <p className="text-xs text-slate-600">{selected?.requestedBy?.email}</p>
+                </div>
+                {selected?.rejectionReason && (
+                  <div className="rounded-lg border border-rose-500/10 bg-rose-500/5 p-3">
+                    <p className="text-[10px] uppercase text-rose-400/70">Rejection reason</p>
+                    <p className="mt-1 text-xs text-rose-200">{selected.rejectionReason}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
-
-    {(rejectId || selected) && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"><div className="w-full max-w-lg rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl">
-      <div className="flex items-center justify-between border-b border-white/[.06] px-5 py-4"><div><p className="text-sm font-semibold text-white">{rejectId?'Reject activation request':'Request details'}</p><p className="mt-0.5 text-xs text-slate-500">{selected?.university?.name||"University activation"}</p></div><button onClick={()=>{setRejectId(null);setSelected(null)}} className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-white"><X size={18}/></button></div>
-      {rejectId ? <div className="p-5"><label className="text-xs font-medium text-slate-400">Rejection reason <span className="text-slate-600">(optional, max 500)</span></label><textarea maxLength={500} rows={5} className="input-dark mt-2 h-auto resize-none py-3" placeholder="Explain why the activation request is being rejected..." value={reason} onChange={e=>setReason(e.target.value)}/><div className="mt-2 text-right text-[10px] text-slate-600">{reason.length}/500</div><div className="mt-5 flex justify-end gap-2"><button onClick={()=>setRejectId(null)} className="btn-secondary">Cancel</button><button disabled={saving} onClick={()=>update(rejectId,'rejected')} className="btn-danger">{saving?'Rejecting...':'Confirm rejection'}</button></div></div> : <div className="space-y-4 p-5 text-sm"><div className="grid grid-cols-2 gap-3"><div className="rounded-lg bg-white/[.025] p-3"><p className="text-[10px] uppercase text-slate-600">University</p><p className="mt-1 font-medium text-slate-200">{selected?.university?.name}</p><p className="text-xs text-slate-600">{selected?.university?.email}</p></div><div className="rounded-lg bg-white/[.025] p-3"><p className="text-[10px] uppercase text-slate-600">Status</p><div className="mt-2"><StatusPill status={selected?.status}/></div></div></div><div className="rounded-lg bg-white/[.025] p-3"><p className="text-[10px] uppercase text-slate-600">Requested by</p><p className="mt-1 font-medium text-slate-200">{selected?.requestedBy?.fullName}</p><p className="text-xs text-slate-600">{selected?.requestedBy?.email}</p></div>{selected?.rejectionReason&&<div className="rounded-lg border border-rose-500/10 bg-rose-500/5 p-3"><p className="text-[10px] uppercase text-rose-400/70">Rejection reason</p><p className="mt-1 text-xs text-rose-200">{selected.rejectionReason}</p></div>}</div>}
-    </div></div>}
-  </div>;
+  );
 };
 export default ActivationRequests;

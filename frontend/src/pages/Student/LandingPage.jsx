@@ -16,7 +16,6 @@ import {
 import { Helmet } from "react-helmet-async";
 import ProductGridSkeleton from "../../components/skeleton/ProductGridSkeleton";
 import LandingPageSkeleton from "../../components/skeleton/LandingPageSkeleton";
-// 1. Import Framer Motion components
 import { motion } from "framer-motion";
 
 const CATEGORIES = [
@@ -58,10 +57,6 @@ const PROCESS_STEPS = [
     bgColor: "bg-emerald-500 text-white",
   },
 ];
-
-// 2. Define Modern Animation Variants
-
-// A subtle slide-up and fade-in for section headers
 const fadeUpVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -69,23 +64,21 @@ const fadeUpVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.22, 1, 0.36, 1], // Custom "out-quint" easing for smoothness
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
 
-// Container variant to stagger children (cards, steps)
 const staggerContainerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15, // Delay between each child animation
+      staggerChildren: 0.15,
     },
   },
 };
 
-// Child variant for grid items: slight scale up, slide up, and fade in
 const gridItemVariants = {
   hidden: { opacity: 0, y: 40, scale: 0.95 },
   visible: {
@@ -99,7 +92,6 @@ const gridItemVariants = {
   },
 };
 
-// Unique pop-in animation for the hero image
 const imageVariants = {
   hidden: { opacity: 0, scale: 0.8, rotate: -2 },
   visible: {
@@ -109,7 +101,7 @@ const imageVariants = {
     transition: {
       duration: 0.8,
       delay: 0.2,
-      ease: [0.34, 1.56, 0.64, 1], // Back-out ease for a slight "pop"
+      ease: [0.34, 1.56, 0.64, 1],
     },
   },
 };
@@ -132,8 +124,6 @@ function LandingPage() {
 
   const [cursorHistory, setCursorHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Track initial render vs subsequent fetches
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const fetchProducts = useCallback(async paramsObj => {
@@ -220,8 +210,6 @@ function LandingPage() {
       cursor: previousCursor,
     }));
   };
-
-  // Render Full Skeleton during initial application boot
   if (isInitialLoad) {
     return <LandingPageSkeleton />;
   }
@@ -268,8 +256,6 @@ function LandingPage() {
               </button>
             </motion.div>
           </motion.div>
-
-          {/* Animate Hero Image */}
           <motion.div variants={imageVariants} className="relative">
             <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/20">
               <img
@@ -278,7 +264,6 @@ function LandingPage() {
                 className="w-full h-95 sm:h-115 object-cover"
               />
             </div>
-            {/* Delivery Badge */}
             <div className="absolute bottom-6 right-6 bg-white/95 dark:bg-[#272829]/95 backdrop-blur-md px-5 py-3 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 flex items-center space-x-3">
               <div className="p-2 bg-teal-100 dark:bg-teal-900/50 rounded-xl text-teal-600 dark:text-teal-400">
                 <Clock size={20} />
@@ -292,13 +277,11 @@ function LandingPage() {
             </div>
           </motion.div>
         </motion.section>
-        {/* Menu / Featured Craves Section */}
         <section id="menu-section" className="max-w-7xl mx-auto px-6 py-12 space-y-8">
-          {/* Animate Menu Header */}
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }} // Trigger when 50% of element is in view
+            viewport={{ once: true, amount: 0.5 }}
             variants={fadeUpVariants}
             className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4"
           >
@@ -310,8 +293,6 @@ function LandingPage() {
                 Our most loved artisanal dishes, curated just for you.
               </p>
             </div>
-
-            {/* Search & Filter Bar */}
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <form onSubmit={handleSearchSubmit} className="relative flex-1 sm:w-64">
                 <input
@@ -337,7 +318,6 @@ function LandingPage() {
               )}
             </div>
           </motion.div>
-          {/* Category Chips Bar */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {CATEGORIES.map(item => (
               <button
@@ -353,22 +333,19 @@ function LandingPage() {
               </button>
             ))}
           </div>
-          {/* Products Grid Condition */}
           {loading ? (
             <ProductGridSkeleton />
           ) : (
             <>
               {products.length > 0 ? (
-                // 3. Staggered Grid Animation
                 <motion.div
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.2 }} // Trigger earlier for grids
+                  viewport={{ once: true, amount: 0.2 }}
                   variants={staggerContainerVariants}
                   className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
                   {products.map((product, index) => (
-                    // Animate individual card container
                     <motion.div
                       key={product._id || index}
                       variants={gridItemVariants}
@@ -390,8 +367,6 @@ function LandingPage() {
                   </p>
                 </div>
               )}
-
-              {/* Pagination Controls */}
               {products.length > 0 && (
                 <div className="flex items-center justify-between bg-white dark:bg-[#2B2D30] p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800 text-xs">
                   <button
@@ -420,9 +395,7 @@ function LandingPage() {
             </>
           )}
         </section>
-        {/* Process Section */}
         <section className="max-w-7xl mx-auto px-6 py-16 space-y-12">
-          {/* Animate Process Header */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -438,8 +411,6 @@ function LandingPage() {
               enjoy your meal.
             </p>
           </motion.div>
-
-          {/* Staggered Process Steps Animation */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -450,7 +421,6 @@ function LandingPage() {
             {PROCESS_STEPS.map(stepItem => {
               const IconComponent = stepItem.icon;
               return (
-                // Animate individual step container
                 <motion.div
                   key={stepItem.step}
                   variants={gridItemVariants}
@@ -477,11 +447,10 @@ function LandingPage() {
             })}
           </motion.div>
         </section>
-        {/* Footer */}
         <footer className="border-t border-slate-200/60 dark:border-slate-800 bg-white/50 dark:bg-[#1A1B1D]/50 py-8 mt-12">
           <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
             <span className="font-serif font-bold text-base text-[#A93226] dark:text-[#E74C3C]">
-              UniBite
+              Mealanzo
             </span>
 
             <div className="flex items-center space-x-6">
@@ -496,7 +465,7 @@ function LandingPage() {
               </a>
             </div>
 
-            <p>© {new Date().getFullYear()} UniBite. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Mealanzo. All rights reserved.</p>
           </div>
         </footer>
       </div>

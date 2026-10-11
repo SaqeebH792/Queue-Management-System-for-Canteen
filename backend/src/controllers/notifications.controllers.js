@@ -40,7 +40,6 @@ const getNotifications = asyncHandler(async (req, res) => {
 
   let notifications = [];
 
-  // FIX: Fetch notifications using .find() instead of running updates or referencing undefined variables
   if (isOrderNotificationRole(role)) {
     notifications = await OrderNotification.find({
       recipient: userId,
@@ -87,7 +86,6 @@ const markNotificationAsRead = asyncHandler(async (req, res) => {
     },
   };
 
-  // FIX: Replaced non-existent .returnDocument() with .findOneAndUpdate()
   if (isOrderNotificationRole(role)) {
     notification = await OrderNotification.findOneAndUpdate(
       {

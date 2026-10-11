@@ -83,7 +83,6 @@ const UniversityDashboard = () => {
     }
   }, []);
 
-  // Debounced Search & Filter Synchronization
   useEffect(() => {
     const handler = setTimeout(() => {
       const trimmedSearch = search.trim();
@@ -98,7 +97,6 @@ const UniversityDashboard = () => {
     return () => clearTimeout(handler);
   }, [search, status, activeFilters, fetchStudents]);
 
-  // Initial Fetch
   useEffect(() => {
     fetchStudents({ search: "", status: "" }, null, true);
     return () => {
@@ -135,7 +133,6 @@ const UniversityDashboard = () => {
     const previousStudents = [...students];
     const newStatus = !student.isActive;
 
-    // Optimistic Update
     setStudents(prev => prev.map(s => (s._id === student._id ? { ...s, isActive: newStatus } : s)));
 
     try {
@@ -153,7 +150,6 @@ const UniversityDashboard = () => {
     setIsBulkUpdating(true);
     const previousStudents = [...students];
 
-    // Optimistic Update
     setStudents(prev =>
       prev.map(s => (selectedStudentIds.includes(s._id) ? { ...s, isActive: targetStatus } : s))
     );
@@ -208,7 +204,6 @@ const UniversityDashboard = () => {
       </Helmet>
 
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-[#1E1F21] dark:text-white">
@@ -219,8 +214,6 @@ const UniversityDashboard = () => {
             </p>
           </div>
         </div>
-
-        {/* Metric Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <div className="bg-white dark:bg-[#1E1F21] rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col justify-between shadow-xs">
             <div className="flex items-center justify-between">
@@ -290,9 +283,7 @@ const UniversityDashboard = () => {
           </div>
         </div>
 
-        {/* Directory Main Container */}
         <div className="bg-white dark:bg-[#1E1F21] rounded-2xl sm:rounded-[28px] shadow-xs overflow-hidden p-3 sm:p-6">
-          {/* Search and Filters Bar */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pb-5 sm:pb-6">
             <div className="relative w-full md:w-80">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
@@ -335,8 +326,6 @@ const UniversityDashboard = () => {
               </button>
             </div>
           </div>
-
-          {/* Bulk Selection Action Bar */}
           {selectedStudentIds.length > 0 && (
             <div className="mb-4 p-3 bg-[#167CC2]/10 border border-[#167CC2]/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in">
               <span className="text-xs font-bold text-[#167CC2] px-2">
@@ -363,8 +352,6 @@ const UniversityDashboard = () => {
               </div>
             </div>
           )}
-
-          {/* Loading Overlay State */}
           {isPageLoading && (
             <div className="py-12 text-center text-zinc-400">
               <div className="flex justify-center items-center gap-2">
@@ -374,14 +361,11 @@ const UniversityDashboard = () => {
             </div>
           )}
 
-          {/* Empty State */}
           {!isPageLoading && students.length === 0 && (
             <div className="py-12 text-center text-zinc-400 text-xs font-medium">
               No student records found matching the applied query.
             </div>
           )}
-
-          {/* Mobile & Tablet View: Cards Layout (< md) */}
           {!isPageLoading && students.length > 0 && (
             <div className="block md:hidden space-y-3">
               {students.map(student => {
@@ -484,11 +468,9 @@ const UniversityDashboard = () => {
               })}
             </div>
           )}
-
-          {/* Desktop Table View (≥ md) */}
           {!isPageLoading && students.length > 0 && (
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[700px]">
+              <table className="w-full text-left border-collapse min-w-175">
                 <thead>
                   <tr className="border-b border-zinc-100 dark:border-zinc-800 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wider">
                     <th className="py-3 px-3 w-10 text-center">
@@ -584,7 +566,6 @@ const UniversityDashboard = () => {
             </div>
           )}
 
-          {/* Cursor Pagination Controls */}
           <div className="pt-5 sm:pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-zinc-100 dark:border-zinc-800 mt-4">
             <span className="text-xs font-bold text-zinc-400 order-2 sm:order-1 text-center sm:text-left">
               Page Level: {cursorHistory.length + 1}

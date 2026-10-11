@@ -38,11 +38,6 @@ function VerifyOrder() {
     loadingRef.current = loading;
   }, [loading]);
 
-  /*
-   * ------------------------------------------------------------
-   * Stop Scanner
-   * ------------------------------------------------------------
-   */
   const stopScanner = useCallback(async () => {
     const scanner = scannerRef.current;
 
@@ -71,11 +66,6 @@ function VerifyOrder() {
     }
   }, []);
 
-  /*
-   * ------------------------------------------------------------
-   * Reset Verification State
-   * ------------------------------------------------------------
-   */
   const clearVerificationState = useCallback(() => {
     if (!mountedRef.current) return;
 
@@ -84,13 +74,7 @@ function VerifyOrder() {
     setVerifiedOrder(null);
   }, []);
 
-  /*
-   * ------------------------------------------------------------
-   * Verify Order API Call
-   * ------------------------------------------------------------
-   */
   const verifyOrder = useCallback(async payload => {
-    // Basic structural check
     if (!payload?.qrData && !payload?.token) {
       const errorMessage = "Pickup token or QR code payload is required.";
       setSuccess(false);
@@ -149,11 +133,6 @@ function VerifyOrder() {
     }
   }, []);
 
-  /*
-   * ------------------------------------------------------------
-   * QR Result Handler
-   * ------------------------------------------------------------
-   */
   const handleQrResult = useCallback(
     async decodedText => {
       if (isProcessingRef.current || loadingRef.current || !mountedRef.current) {
@@ -168,8 +147,6 @@ function VerifyOrder() {
         if (!mountedRef.current) return;
 
         setCameraOpen(false);
-
-        // Pass raw decodedText as qrData to match backend expectation
         await verifyOrder({
           qrData: decodedText,
         });
@@ -191,11 +168,6 @@ function VerifyOrder() {
     [stopScanner, verifyOrder]
   );
 
-  /*
-   * ------------------------------------------------------------
-   * Start Scanner
-   * ------------------------------------------------------------
-   */
   const startScanner = useCallback(async () => {
     const readerElement = readerRef.current;
 
@@ -235,11 +207,6 @@ function VerifyOrder() {
     }
   }, [handleQrResult, stopScanner]);
 
-  /*
-   * ------------------------------------------------------------
-   * Lifecycle hooks
-   * ------------------------------------------------------------
-   */
   useEffect(() => {
     mountedRef.current = true;
     return () => {
@@ -271,11 +238,6 @@ function VerifyOrder() {
     };
   }, [cameraOpen, startScanner, stopScanner]);
 
-  /*
-   * ------------------------------------------------------------
-   * Event Handlers
-   * ------------------------------------------------------------
-   */
   const handleOpenCamera = () => {
     if (loading) return;
     isProcessingRef.current = false;
@@ -327,8 +289,6 @@ function VerifyOrder() {
       toast.error(errorMessage);
       return;
     }
-
-    // Manual payload sends only token
     await verifyOrder({
       token: trimmedToken,
     });
@@ -352,7 +312,6 @@ function VerifyOrder() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-            {/* Camera Viewport Container */}
             <div className="relative rounded-2xl overflow-hidden bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 min-h-60 sm:min-h-70 flex flex-col items-center justify-center shadow-xs p-4 sm:p-6">
               {!cameraOpen ? (
                 <button
@@ -397,8 +356,6 @@ function VerifyOrder() {
                 </div>
               )}
             </div>
-
-            {/* Manual Verification Form */}
             <div className="bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
               <div>
                 <span className="block text-xs font-bold uppercase tracking-wider text-zinc-400">
@@ -446,8 +403,6 @@ function VerifyOrder() {
               </form>
             </div>
           </div>
-
-          {/* Verification Status Side */}
           <div className="lg:col-span-5 xl:col-span-4">
             <div className="bg-white dark:bg-[#1E1F21] border border-zinc-200/80 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs">
               <div

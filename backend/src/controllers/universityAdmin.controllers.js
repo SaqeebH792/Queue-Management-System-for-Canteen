@@ -176,6 +176,9 @@ const registerUniAdmin = asyncHandler(async (req, res) => {
     email: normalizedEmail,
   });
 
+  if (existingUniversity) {
+    throw new apiError(400, "Already Registered University");
+  }
   let universityAdmin;
 
   const session = await mongoose.startSession();
@@ -245,7 +248,6 @@ const loginUniAdmin = asyncHandler(async (req, res, next) => {
   const response = await UniversityAdmin.findById(universityAdmin._id).select(
     "-password -refreshToken"
   );
-
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

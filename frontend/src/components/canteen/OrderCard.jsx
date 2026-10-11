@@ -1,35 +1,30 @@
 import { Check, ArrowRight } from "lucide-react";
 
-// Helper to configure button appearance & target status per state
-const GET_TRANSITION_CONFIG = (currentStatus) => {
+const GET_TRANSITION_CONFIG = currentStatus => {
   switch (currentStatus) {
     case "Pending":
       return {
         nextStatus: "Accepted",
         label: "Accept Order",
-        buttonClass:
-          "bg-[#167CC2] hover:bg-[#1368A3] text-white cursor-pointer",
+        buttonClass: "bg-[#167CC2] hover:bg-[#1368A3] text-white cursor-pointer",
       };
     case "Accepted":
       return {
         nextStatus: "Preparing",
         label: "Mark as Preparing",
-        buttonClass:
-          "bg-amber-500 hover:bg-amber-600 text-white cursor-pointer",
+        buttonClass: "bg-amber-500 hover:bg-amber-600 text-white cursor-pointer",
       };
     case "Preparing":
       return {
         nextStatus: "Ready",
         label: "Mark as Ready",
-        buttonClass:
-          "bg-[#D2F535] hover:bg-[#c2e42d] text-[#1E1F21] cursor-pointer",
+        buttonClass: "bg-[#D2F535] hover:bg-[#c2e42d] text-[#1E1F21] cursor-pointer",
       };
     case "Ready":
       return {
         nextStatus: "Delivered",
         label: "Mark as Delivered",
-        buttonClass:
-          "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer",
+        buttonClass: "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer",
       };
     case "Delivered":
     default:
@@ -42,7 +37,7 @@ const GET_TRANSITION_CONFIG = (currentStatus) => {
   }
 };
 
-const GET_STATUS_BADGE = (status) => {
+const GET_STATUS_BADGE = status => {
   switch (status) {
     case "Pending":
       return {
@@ -86,20 +81,14 @@ const OrderCard = ({ order, onStatusChange }) => {
   const currentStatus = order?.status || "Pending";
   const badge = GET_STATUS_BADGE(currentStatus);
   const transition = GET_TRANSITION_CONFIG(currentStatus);
-  const isCompleted =
-    currentStatus === "Delivered" || currentStatus === "Cancelled";
+  const isCompleted = currentStatus === "Delivered" || currentStatus === "Cancelled";
 
-  // Calculate or extract total price
   const totalPrice =
     order?.totalPrice ??
     order?.totalAmount ??
-    order?.items?.reduce(
-      (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
-      0,
-    ) ??
+    order?.items?.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0) ??
     0;
 
-  // Extract student details safely
   const studentName = order?.student?.name || order?.customerName || "Student";
   const registrationNo =
     order?.student?.registrationNo ||
@@ -112,7 +101,6 @@ const OrderCard = ({ order, onStatusChange }) => {
       className={`bg-white dark:bg-[#1E1F21] border-zinc-100 dark:border-zinc-800 border-l-4 rounded-[28px] p-5 sm:p-6 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between h-full font-sans text-[#1E1F21] dark:text-zinc-100`}
     >
       <div>
-        {/* Header: Full Order ID & Status Badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0 flex-1">
             <span className="text-[10px] font-extrabold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider block">
@@ -130,7 +118,6 @@ const OrderCard = ({ order, onStatusChange }) => {
           </span>
         </div>
 
-        {/* Customer / Student Information */}
         <div className="mb-4">
           <h3 className="text-base sm:text-lg font-extrabold text-[#1E1F21] dark:text-white leading-snug">
             {studentName}
@@ -142,7 +129,6 @@ const OrderCard = ({ order, onStatusChange }) => {
           )}
         </div>
 
-        {/* Item Summary List */}
         <div className="space-y-2.5 border-t border-zinc-100 dark:border-zinc-800/80 pt-4 mb-4">
           {order?.items?.map((item, idx) => (
             <div
@@ -153,9 +139,7 @@ const OrderCard = ({ order, onStatusChange }) => {
                 <span className="font-extrabold px-2 py-0.5 rounded-full bg-[#F3F4F6] dark:bg-zinc-800 text-[#167CC2] text-xs">
                   {item.quantity}x
                 </span>
-                <span className="font-bold text-[#1E1F21] dark:text-zinc-200">
-                  {item.name}
-                </span>
+                <span className="font-bold text-[#1E1F21] dark:text-zinc-200">{item.name}</span>
               </div>
               {item.price > 0 && (
                 <span className="text-xs font-extrabold text-zinc-500 dark:text-zinc-400 font-mono">
@@ -167,7 +151,6 @@ const OrderCard = ({ order, onStatusChange }) => {
         </div>
       </div>
 
-      {/* Footer: Total Price & Dynamic Next Status Button */}
       <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-extrabold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">

@@ -11,7 +11,6 @@ function Navbar({ user, profileLinks = [], isLoading = false }) {
 
   const currentUser = user?.data?.user || user;
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -31,15 +30,11 @@ function Navbar({ user, profileLinks = [], isLoading = false }) {
 
   return (
     <header className="h-16 w-full bg-white/80 dark:bg-[#1E1F21]/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 transition-colors font-sans text-[#1E1F21] dark:text-zinc-100">
-      {/* Title / Section Placeholder */}
       <div className="text-xs sm:text-sm font-extrabold text-[#1E1F21] dark:text-white"></div>
 
-      {/* Right Controls Area */}
       <div className="flex items-center gap-2.5">
-        {/* Notification Bell Component */}
         <NotificationBell />
 
-        {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
           aria-label="Toggle theme"
@@ -54,24 +49,18 @@ function Navbar({ user, profileLinks = [], isLoading = false }) {
 
         <div className="h-5 w-px bg-zinc-200 dark:bg-zinc-800 mx-1" />
 
-        {/* Profile Icon Dropdown Trigger */}
         <div ref={profileRef} className="relative">
           <button
-            onClick={() => setIsProfileOpen((prev) => !prev)}
+            onClick={() => setIsProfileOpen(prev => !prev)}
             className="w-9 h-9 rounded-full bg-[#167CC2] text-white font-extrabold text-xs shadow-xs flex items-center justify-center overflow-hidden hover:ring-2 hover:ring-[#167CC2]/40 transition-all cursor-pointer"
           >
             {currentUser?.avatar ? (
-              <img
-                src={currentUser.avatar}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              <img src={currentUser.avatar} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               getUserInitial()
             )}
           </button>
 
-          {/* Quick Popover Menu for Profile */}
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-[#1E1F21] border border-zinc-100 dark:border-zinc-800 rounded-3xl shadow-lg p-2 space-y-1 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
               <div className="px-3 py-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
@@ -95,9 +84,7 @@ function Navbar({ user, profileLinks = [], isLoading = false }) {
                       }}
                       className="w-full flex items-center gap-2.5 px-3 py-2 rounded-full text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                     >
-                      {pLink.icon && (
-                        <span className="w-4 h-4 shrink-0">{pLink.icon}</span>
-                      )}
+                      {pLink.icon && <span className="w-4 h-4 shrink-0">{pLink.icon}</span>}
                       <span>{pLink.label}</span>
                     </button>
                   ) : (
@@ -107,12 +94,10 @@ function Navbar({ user, profileLinks = [], isLoading = false }) {
                       onClick={() => setIsProfileOpen(false)}
                       className="flex items-center gap-2.5 px-3 py-2 rounded-full text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:bg-[#F3F4F6] dark:hover:bg-zinc-800 transition-colors"
                     >
-                      {pLink.icon && (
-                        <span className="w-4 h-4 shrink-0">{pLink.icon}</span>
-                      )}
+                      {pLink.icon && <span className="w-4 h-4 shrink-0">{pLink.icon}</span>}
                       <span>{pLink.label}</span>
                     </NavLink>
-                  ),
+                  )
                 )}
               </div>
             </div>

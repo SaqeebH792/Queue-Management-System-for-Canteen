@@ -1,35 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
 
-export const verifyAuth = createAsyncThunk(
-  "auth/verifyAuth",
-  async (_, thunkAPI) => {
-    try {
-      const response = await axiosInstance.get("/users/verify", {
-        withCredentials: true,
-      });
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data);
-    }
-  },
-);
+export const verifyAuth = createAsyncThunk("auth/verifyAuth", async (_, thunkAPI) => {
+  try {
+    const response = await axiosInstance.get("/users/verify", {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data);
+  }
+});
 
-export const logoutAction = createAsyncThunk(
-  "auth/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post(
-        "users/admin/logout",
-        {},
-        { withCredentials: true },
-      );
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Logout failed");
-    }
-  },
-);
+export const logoutAction = createAsyncThunk("auth/logout", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.post("users/admin/logout", {}, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || "Logout failed");
+  }
+});
 
 const initialState = {
   user: null,
@@ -47,10 +37,9 @@ const authSlice = createSlice({
       state.loading = false;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      // Verification Handlers
-      .addCase(verifyAuth.pending, (state) => {
+      .addCase(verifyAuth.pending, state => {
         state.loading = true;
       })
       .addCase(verifyAuth.fulfilled, (state, action) => {
@@ -58,22 +47,21 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload;
       })
-      .addCase(verifyAuth.rejected, (state) => {
+      .addCase(verifyAuth.rejected, state => {
         state.loading = false;
         state.isAuthenticated = false;
         state.user = null;
       })
 
-      // Async Logout Handlers
-      .addCase(logoutAction.pending, (state) => {
+      .addCase(logoutAction.pending, state => {
         state.loading = true;
       })
-      .addCase(logoutAction.fulfilled, (state) => {
+      .addCase(logoutAction.fulfilled, state => {
         state.user = null;
         state.isAuthenticated = false;
         state.loading = false;
       })
-      .addCase(logoutAction.rejected, (state) => {
+      .addCase(logoutAction.rejected, state => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;

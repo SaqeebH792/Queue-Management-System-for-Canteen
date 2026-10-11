@@ -1,24 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import ReactDOM from "react-dom";
-import {
-  X,
-  Clock,
-  AlertTriangle,
-  Loader2,
-  Lock,
-  Banknote,
-  Check,
-} from "lucide-react";
+import { X, Clock, AlertTriangle, Loader2, Lock, Banknote, Check } from "lucide-react";
 import { toast } from "sonner";
 import { estimateOrder, createOrder } from "../../routes/student.routes";
 
-function OrderSummaryModal({
-  isOpen,
-  onClose,
-  product,
-  quantity,
-  onOrderSuccess,
-}) {
+function OrderSummaryModal({ isOpen, onClose, product, quantity, onOrderSuccess }) {
   const [loadingEstimate, setLoadingEstimate] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
   const [estimate, setEstimate] = useState(null);
@@ -40,7 +26,7 @@ function OrderSummaryModal({
   }, [isOpen]);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = e => {
       if (e.key === "Escape") onClose();
     };
 
@@ -70,9 +56,7 @@ function OrderSummaryModal({
 
         setEstimate(response.data);
       } catch (err) {
-        const errMsg =
-          err?.response?.data?.message ||
-          "Unable to calculate estimated pickup time.";
+        const errMsg = err?.response?.data?.message || "Unable to calculate estimated pickup time.";
         setError(errMsg);
         toast.error("Estimation failed", { description: errMsg });
       } finally {
@@ -83,7 +67,6 @@ function OrderSummaryModal({
     fetchEstimate();
   }, [isOpen, product, quantity]);
 
-  // Generate 4 slots with 30-min gaps starting from (Now + ASAP Estimate)
   const timeSlots = useMemo(() => {
     if (!isOpen) return [];
 
@@ -91,10 +74,7 @@ function OrderSummaryModal({
 
     const estimatedPrepMinutes = parseInt(estimate?.estimatedTime, 10) || 15;
 
-    // Earliest pickup time = now + preparation time
     const baseTime = new Date(Date.now() + estimatedPrepMinutes * 60 * 1000);
-
-    // First slot = exact ASAP time
     const firstSlot = new Date(baseTime);
 
     slots.push({
@@ -113,7 +93,6 @@ function OrderSummaryModal({
       minutesFromNow: estimatedPrepMinutes,
     });
 
-    // Remaining slots aligned to 30-minute intervals
     const roundedBase = new Date(baseTime);
 
     roundedBase.setSeconds(0);
@@ -125,7 +104,6 @@ function OrderSummaryModal({
 
     roundedBase.setMinutes(next30MinuteMark);
 
-    // If minute was > 30, setMinutes(60) automatically moves to next hour
     for (let i = 0; i < 3; i++) {
       const slotDate = new Date(roundedBase.getTime() + i * 30 * 60 * 1000);
 
@@ -147,7 +125,6 @@ function OrderSummaryModal({
     return slots;
   }, [isOpen, estimate]);
 
-  // Auto-select first slot when timeSlots populate
   useEffect(() => {
     if (timeSlots.length > 0 && !selectedPickupSlot) {
       setSelectedPickupSlot(timeSlots[0]);
@@ -173,7 +150,7 @@ function OrderSummaryModal({
             paymentMethod: "CASH_ON_DELIVERY",
           },
         ],
-        selectedPickupSlot?.isoString,
+        selectedPickupSlot?.isoString
       );
 
       toast.success("Order Placed Successfully!", {
@@ -204,18 +181,15 @@ function OrderSummaryModal({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      {/* Backdrop */}
       <div
         onClick={onClose}
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
       />
 
-      {/* Main Card */}
       <div
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
         className="relative w-full max-w-5xl bg-white dark:bg-[#1E1F21] rounded-[28px] shadow-xs overflow-hidden transition-all my-auto max-h-[90vh] flex flex-col z-10"
       >
-        {/* Header */}
         <div className="px-6 py-4 bg-white dark:bg-[#1E1F21] border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between shrink-0">
           <h2 className="text-lg font-extrabold text-[#1E1F21] dark:text-white tracking-tight">
             Checkout
@@ -229,7 +203,6 @@ function OrderSummaryModal({
           </button>
         </div>
 
-        {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6">
           {loadingEstimate ? (
             <div className="py-20 flex flex-col items-center justify-center text-center space-y-3">
@@ -245,15 +218,10 @@ function OrderSummaryModal({
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Column: Options */}
               <div className="lg:col-span-7 space-y-6">
-                {/* Section 1: Pickup Details */}
                 <div className="bg-[#F3F4F6] dark:bg-zinc-800/60 rounded-[28px] p-5 sm:p-6 space-y-4">
                   <div className="flex items-center gap-2">
-                    <Clock
-                      size={18}
-                      className="text-[#1E1F21] dark:text-white"
-                    />
+                    <Clock size={18} className="text-[#1E1F21] dark:text-white" />
                     <h3 className="text-base font-extrabold text-[#1E1F21] dark:text-white">
                       Pickup Details
                     </h3>
@@ -266,9 +234,8 @@ function OrderSummaryModal({
                     .
                   </p>
 
-                  {/* 4 Time Slots (30-min intervals calculated from ASAP) */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                    {timeSlots.map((slot) => {
+                    {timeSlots.map(slot => {
                       const isSelected = selectedPickupSlot?.id === slot.id;
                       return (
                         <button
@@ -297,13 +264,9 @@ function OrderSummaryModal({
                   </div>
                 </div>
 
-                {/* Section 2: Payment Method */}
                 <div className="bg-[#F3F4F6] dark:bg-zinc-800/60 rounded-[28px] p-5 sm:p-6 space-y-4">
                   <div className="flex items-center gap-2 border-t-2 border-[#167CC2] pt-2">
-                    <Banknote
-                      size={18}
-                      className="text-[#1E1F21] dark:text-white"
-                    />
+                    <Banknote size={18} className="text-[#1E1F21] dark:text-white" />
                     <h3 className="text-base font-extrabold text-[#1E1F21] dark:text-white">
                       Payment Method
                     </h3>
@@ -330,14 +293,12 @@ function OrderSummaryModal({
                 </div>
               </div>
 
-              {/* Right Column: Order Summary */}
               <div className="lg:col-span-5">
                 <div className="bg-[#F3F4F6] dark:bg-zinc-800/60 rounded-[28px] p-6 space-y-6 sticky top-0">
                   <h3 className="text-lg font-extrabold text-[#1E1F21] dark:text-white">
                     Order Summary
                   </h3>
 
-                  {/* Product List */}
                   <div className="space-y-4">
                     <div className="flex items-start justify-between text-xs">
                       <div className="flex items-start gap-2.5">
@@ -355,13 +316,10 @@ function OrderSummaryModal({
                           )}
                         </div>
                       </div>
-                      <span className="font-extrabold text-[#167CC2]">
-                        Rs: {subtotal}
-                      </span>
+                      <span className="font-extrabold text-[#167CC2]">Rs: {subtotal}</span>
                     </div>
                   </div>
 
-                  {/* Price Calculations */}
                   <div className="border-t border-zinc-200 dark:border-zinc-700 pt-4 space-y-2.5 text-xs text-zinc-500 dark:text-zinc-400 font-semibold">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
@@ -371,23 +329,17 @@ function OrderSummaryModal({
                     </div>
                     <div className="flex justify-between">
                       <span>Campus Fee</span>
-                      <span className="font-extrabold text-[#1E1F21] dark:text-white">
-                        Rs: 0.0
-                      </span>
+                      <span className="font-extrabold text-[#1E1F21] dark:text-white">Rs: 0.0</span>
                     </div>
                   </div>
 
-                  {/* Total */}
                   <div className="border-t border-zinc-200 dark:border-zinc-700 pt-4 flex items-center justify-between">
                     <span className="text-xl font-extrabold text-[#1E1F21] dark:text-white">
                       Total
                     </span>
-                    <span className="text-2xl font-extrabold text-[#167CC2]">
-                      Rs: {grandTotal}
-                    </span>
+                    <span className="text-2xl font-extrabold text-[#167CC2]">Rs: {grandTotal}</span>
                   </div>
 
-                  {/* Actions */}
                   <div className="space-y-3">
                     <button
                       type="button"
@@ -409,8 +361,7 @@ function OrderSummaryModal({
                     </button>
 
                     <p className="text-[10px] text-center text-zinc-400 font-semibold leading-normal">
-                      By confirming, you agree to pay Rs: {grandTotal} in cash
-                      upon pickup.
+                      By confirming, you agree to pay Rs: {grandTotal} in cash upon pickup.
                     </p>
                   </div>
                 </div>
@@ -420,7 +371,7 @@ function OrderSummaryModal({
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 

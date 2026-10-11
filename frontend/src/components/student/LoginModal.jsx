@@ -19,7 +19,7 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
   });
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = e => {
       if (e.key === "Escape") onClose();
     };
 
@@ -36,15 +36,15 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
 
   if (!isOpen) return null;
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     setError("");
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     const registrationNo = formData.registrationNo.trim();
@@ -68,7 +68,6 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
 
       const { user } = response.data;
 
-      // Connect socket
       socket.connect();
       socket.emit("Join", user._id);
 
@@ -77,14 +76,11 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
       } catch (authErr) {
         socket.disconnect();
         setError(
-          typeof authErr === "string"
-            ? authErr
-            : authErr?.message || "Failed to verify session.",
+          typeof authErr === "string" ? authErr : authErr?.message || "Failed to verify session."
         );
         return;
       }
 
-      // Reset Form
       setFormData({
         registrationNo: "",
         cnic: "",
@@ -95,9 +91,7 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
         onSuccess();
       }
     } catch (err) {
-      setError(
-        err?.response?.data?.message || "Login failed. Please try again.",
-      );
+      setError(err?.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -105,18 +99,15 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div
         onClick={onClose}
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in"
       />
 
-      {/* Modal Dialog */}
       <div
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
         className="relative w-full max-w-md bg-white dark:bg-[#1E1F21] rounded-[28px] p-6 sm:p-8 shadow-2xl z-10 transition-all transform animate-scale-up border border-zinc-100 dark:border-zinc-800"
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-5 right-5 p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-[#1E1F21] dark:hover:text-white transition-colors cursor-pointer"
@@ -124,20 +115,16 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
           <X size={18} />
         </button>
 
-        {/* Header */}
         <div className="text-center space-y-2 mb-6">
           <div className="w-12 h-12 rounded-full bg-[#167CC2]/10 text-[#167CC2] flex items-center justify-center mx-auto">
             <UserCheck size={22} />
           </div>
-          <h2 className="text-2xl font-extrabold text-[#1E1F21] dark:text-white">
-            Login Required
-          </h2>
+          <h2 className="text-2xl font-extrabold text-[#1E1F21] dark:text-white">Login Required</h2>
           <p className="text-xs font-semibold text-zinc-400">
             Sign in to continue placing your order.
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-3">
             <div className="space-y-1">
@@ -220,7 +207,7 @@ function LoginModal({ isOpen, onClose, onSuccess }) {
         </form>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 

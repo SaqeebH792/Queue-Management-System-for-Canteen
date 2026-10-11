@@ -18,16 +18,12 @@ const ROLE_MAP = {
 function NotificationListener() {
   const dispatch = useDispatch();
 
-  const adminAuth = useSelector((state) => state.auth);
-  const studentAuth = useSelector((state) => state.studentAuth);
+  const adminAuth = useSelector(state => state.auth);
+  const studentAuth = useSelector(state => state.studentAuth);
 
-  // Normalize user object
-  const currentUser =
-    adminAuth.user?.data?.user || adminAuth.user || studentAuth.user || null;
+  const currentUser = adminAuth.user?.data?.user || adminAuth.user || studentAuth.user || null;
 
-  // Normalize authentication
-  const isAuthenticated =
-    adminAuth.isAuthenticated || studentAuth.isAuthenticated;
+  const isAuthenticated = adminAuth.isAuthenticated || studentAuth.isAuthenticated;
 
   useEffect(() => {
     if (isAuthenticated && currentUser) {
@@ -50,15 +46,13 @@ function NotificationListener() {
       universityId: currentUser.universityId || null,
     });
 
-    const handleNotification = (notification) => {
+    const handleNotification = notification => {
       dispatch(addNotification(notification));
 
       toast(notification.title || "Notification", {
         description: notification.message || "You have a new notification.",
       });
     };
-
-    // Prevent duplicate listeners
     socket.off("newNotification");
     socket.on("newNotification", handleNotification);
 

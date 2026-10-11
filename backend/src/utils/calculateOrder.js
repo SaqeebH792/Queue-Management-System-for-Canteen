@@ -10,7 +10,6 @@ const PREP_TIME_MAP = {
   Desserts: 5,
 };
 
-// Calculate realistic preparation time
 const calculatePrepTime = (category, quantity) => {
   const baseTime = PREP_TIME_MAP[category] || 5;
 
@@ -18,7 +17,6 @@ const calculatePrepTime = (category, quantity) => {
     return baseTime;
   }
 
-  // Additional items take less time because kitchen batches them
   const extraTime = (quantity - 1) * (baseTime * 0.15);
 
   return Math.ceil(baseTime + extraTime);
@@ -32,8 +30,6 @@ export const calculateOrder = async (items, universityId) => {
   if (!universityId) {
     throw new apiError(400, "University ID required");
   }
-
-  // Merge duplicate products
   const itemMap = new Map();
 
   for (const item of items) {
@@ -48,7 +44,6 @@ export const calculateOrder = async (items, universityId) => {
 
   const productIds = [...itemMap.keys()];
 
-  // One database query instead of N queries
   const products = await Product.find({
     _id: {
       $in: productIds,
@@ -96,7 +91,6 @@ export const calculateOrder = async (items, universityId) => {
     });
   }
 
-  // Get current kitchen queue
   const pendingOrders = await Order.find({
     universityId,
     status: "Pending",

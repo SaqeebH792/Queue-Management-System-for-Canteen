@@ -1,7 +1,6 @@
 function ProductSkeleton() {
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-4 sm:space-y-6 max-w-350 mx-auto animate-pulse">
-      {/* Header Skeleton */}
+    <div className="p-3 sm:p-6 md:p-8 space-y-4 sm:space-y-6 max-w-350 mx-auto animate-pulse mt-[8%]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div className="space-y-2">
           <div className="h-6 sm:h-7 w-32 sm:w-36 bg-gray-200 dark:bg-[#2A2D32] rounded-md" />
@@ -10,9 +9,7 @@ function ProductSkeleton() {
         <div className="h-9 sm:h-10 w-full sm:w-40 bg-gray-200 dark:bg-[#2A2D32] rounded-md" />
       </div>
 
-      {/* Main Content Card Skeleton */}
       <div className="bg-white dark:bg-[#1E1F21] border border-gray-200 dark:border-[#2E3035] rounded-lg shadow-xs overflow-hidden">
-        {/* Controls Bar Skeleton */}
         <div className="p-3 sm:p-5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 border-b border-gray-200 dark:border-[#2E3035]">
           <div className="h-9 w-full md:max-w-md bg-gray-200 dark:bg-[#2A2D32] rounded-md" />
           <div className="flex items-center gap-2 w-full md:w-auto">
@@ -22,7 +19,6 @@ function ProductSkeleton() {
           </div>
         </div>
 
-        {/* Desktop Table View Skeleton */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-sm border-collapse min-w-170">
             <thead>
@@ -75,7 +71,6 @@ function ProductSkeleton() {
           </table>
         </div>
 
-        {/* Mobile Card Grid Skeleton */}
         <div className="grid md:hidden grid-cols-1 sm:grid-cols-2 gap-3 p-3 sm:p-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <div
@@ -103,7 +98,6 @@ function ProductSkeleton() {
           ))}
         </div>
 
-        {/* Footer Skeleton */}
         <div className="px-3 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-200 dark:border-[#2E3035]">
           <div className="h-4 w-40 bg-gray-200 dark:bg-[#2A2D32] rounded" />
           <div className="flex items-center gap-1.5">

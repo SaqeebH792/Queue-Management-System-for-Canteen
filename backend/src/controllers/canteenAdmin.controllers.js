@@ -1,19 +1,21 @@
 import mongoose from "mongoose";
-// Models
 import { Order } from "../models/order.model.js";
 import { Product } from "../models/product.model.js";
 import { CanteenAdmin } from "../models/canteenAdmin.model.js";
 import { Student } from "../models/student.model.js";
-// Utils
+import { OrderNotification } from "../models/orderNotification.model.js";
 import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { generateAccessAndRefreshToken } from "../utils/generateAccessAndRefreshToken.js";
-// Others
 import validator from "validator";
 import { v2 as cloudinary } from "cloudinary";
-// Canteen Admin Login
+import crypto from "crypto";
+import { mkdir } from "fs/promises";
+import path from "path";
+import QRCode from "qrcode";
+
 const loginCanteenAdmin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -74,8 +76,6 @@ const loginCanteenAdmin = asyncHandler(async (req, res) => {
     );
 });
 
-// Canteen Admin List Products
-
 const CATEGORY_MAP = Object.freeze({
   "fast food": "Fast Food",
   drinks: "Drinks",
@@ -87,7 +87,6 @@ const CATEGORY_MAP = Object.freeze({
 const listProduct = asyncHandler(async (req, res) => {
   const { name, price, category, description = "" } = req.body;
 
-  // Validate required fields
   const trimmedName = name?.trim();
   const normalizedCategory = CATEGORY_MAP[category?.trim().toLowerCase()];
 
@@ -95,12 +94,10 @@ const listProduct = asyncHandler(async (req, res) => {
     throw new apiError(400, "Name, category and price are required");
   }
 
-  // Validate product name
   if (trimmedName.length < 2 || trimmedName.length > 100) {
     throw new apiError(400, "Product name must be between 2 and 100 characters");
   }
 
-  // Validate price
   const numericPrice = Number(price);
 
   if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
@@ -111,12 +108,10 @@ const listProduct = asyncHandler(async (req, res) => {
     throw new apiError(400, "Price exceeds allowed limit");
   }
 
-  // Validate uploaded image
   if (!req.file?.path) {
     throw new apiError(400, "Product image is required");
   }
 
-  // Upload image
   const image = await uploadOnCloudinary(req.file.path);
 
   if (!image?.secure_url || !image?.public_id) {
@@ -138,7 +133,6 @@ const listProduct = asyncHandler(async (req, res) => {
       isAvailable: true,
     });
   } catch (error) {
-    // Roll back uploaded image
     await cloudinary.uploader.destroy(image.public_id).catch(() => {});
     throw error;
   }
@@ -159,7 +153,7 @@ const listProduct = asyncHandler(async (req, res) => {
     )
   );
 });
-// Get All order from database / Filter based on Category & Status / Search based on Student Name, Registration No or Cnic
+
 const allowedStatuses = ["Pending", "Accepted", "Ready", "Preparing", "Delivered", "Cancelled"];
 const getOrders = asyncHandler(async (req, res) => {
   const universityId = req.user.universityId;
@@ -172,8 +166,6 @@ const getOrders = asyncHandler(async (req, res) => {
     },
   ];
 
-  // Status filter
-
   if (status && status !== "all") {
     if (!allowedStatuses.includes(status)) {
       throw new apiError(400, "Invalid order status");
@@ -182,8 +174,6 @@ const getOrders = asyncHandler(async (req, res) => {
       status,
     });
   }
-
-  // Search student
 
   if (search?.trim()) {
     const escapedSearch = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -237,7 +227,6 @@ const getOrders = asyncHandler(async (req, res) => {
     });
   }
 
-  // Cursor validation
   if (cursorCreatedAt && cursorId) {
     if (!mongoose.Types.ObjectId.isValid(cursorId)) {
       throw new apiError(400, "Invalid cursor id");
@@ -253,10 +242,8 @@ const getOrders = asyncHandler(async (req, res) => {
             $lt: cursorDate,
           },
         },
-
         {
           createdAt: cursorDate,
-
           _id: {
             $lt: new mongoose.Types.ObjectId(cursorId),
           },
@@ -267,22 +254,17 @@ const getOrders = asyncHandler(async (req, res) => {
 
   const orders = await Order.aggregate([
     {
-      $match: {
-        $and: conditions,
-      },
+      $match: { $and: conditions },
     },
-
     {
       $sort: {
         createdAt: -1,
         _id: -1,
       },
     },
-
     {
       $limit: limit + 1,
     },
-
     {
       $lookup: {
         from: "students",
@@ -291,14 +273,12 @@ const getOrders = asyncHandler(async (req, res) => {
         as: "student",
       },
     },
-
     {
       $unwind: {
         path: "$student",
         preserveNullAndEmptyArrays: true,
       },
     },
-
     {
       $project: {
         status: 1,
@@ -333,13 +313,10 @@ const getOrders = asyncHandler(async (req, res) => {
           nextCursor,
         },
       },
-
       "Orders fetched successfully"
     )
   );
 });
-
-// Update Status, Generate QR Code and Send Notification when Status Changes
 
 const ORDER_TRANSITIONS = Object.freeze({
   Pending: ["Accepted"],
@@ -348,25 +325,23 @@ const ORDER_TRANSITIONS = Object.freeze({
   Ready: ["Delivered"],
   Delivered: [],
 });
+
 const NOTIFICATIONS = Object.freeze({
   Accepted: {
     title: "Order Accepted",
     message: "Your order has been accepted.",
     type: "OrderAccepted",
   },
-
   Preparing: {
     title: "Preparing Order",
     message: "Your food is being prepared.",
     type: "OrderPreparing",
   },
-
   Ready: {
     title: "Order Ready",
     message: "Your order is ready for pickup.",
     type: "OrderReady",
   },
-
   Delivered: {
     title: "Order Completed",
     message: "Your order has been delivered.",
@@ -400,12 +375,10 @@ const updateStatus = asyncHandler(async (req, res) => {
       throw new apiError(404, "Order not found");
     }
 
-    // University check
     if (!order.universityId.equals(req.user.universityId)) {
       throw new apiError(403, "Unauthorized");
     }
 
-    // Canteen admin ownership check
     if (!order.canteenAdminId.equals(req.user._id)) {
       throw new apiError(403, "You are not allowed to update this order");
     }
@@ -416,7 +389,6 @@ const updateStatus = asyncHandler(async (req, res) => {
       throw new apiError(400, `Cannot change ${order.status} to ${status}`);
     }
 
-    // Generate QR
     if (status === "Accepted" && !order.pickupToken) {
       const pickupToken = crypto.randomBytes(3).toString("hex");
 
@@ -459,8 +431,6 @@ const updateStatus = asyncHandler(async (req, res) => {
       session,
     });
 
-    // Create notification inside transaction
-
     const notify = NOTIFICATIONS[status];
 
     if (notify) {
@@ -469,19 +439,12 @@ const updateStatus = asyncHandler(async (req, res) => {
           {
             recipient: order.studentId,
             recipientModel: "Student",
-
             universityId: order.universityId,
-
             canteenAdminId: order.canteenAdminId,
-
             orderId: order._id,
-
             title: notify.title,
-
             message: notify.message,
-
             type: notify.type,
-
             link: "/student/orders",
           },
         ],
@@ -495,13 +458,10 @@ const updateStatus = asyncHandler(async (req, res) => {
 
     await session.commitTransaction();
 
-    // Socket notification after transaction success
-
     if (notification) {
       try {
         const io = getSocketIO();
 
-        // Only this student receives it
         io.to(order.studentId.toString()).emit("newNotification", notification);
 
         io.to(order.studentId.toString()).emit("orderStatusUpdated", {
@@ -539,15 +499,13 @@ const updateStatus = asyncHandler(async (req, res) => {
   }
 });
 
-// Delete Products
 const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  // Validate ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new apiError(400, "Invalid product id");
   }
-  // Find and delete in a single database query
+
   const product = await Product.findOneAndDelete({
     _id: id,
     universityId: req.user.universityId,
@@ -558,12 +516,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new apiError(404, "Product not found");
   }
 
-  // Delete image from Cloudinary
   if (product.imagePublicId) {
     try {
       const result = await cloudinary.uploader.destroy(product.imagePublicId);
 
-      // "not found" is acceptable because the image is already gone
       if (result.result !== "ok" && result.result !== "not found") {
         logger?.error?.(
           `Unexpected Cloudinary response while deleting image: ${JSON.stringify(result)}`
@@ -584,4 +540,5 @@ const deleteProduct = asyncHandler(async (req, res) => {
     )
   );
 });
-export { loginCanteenAdmin, listProduct, getOrders ,  updateStatus, deleteProduct};
+
+export { loginCanteenAdmin, listProduct, getOrders, updateStatus, deleteProduct };

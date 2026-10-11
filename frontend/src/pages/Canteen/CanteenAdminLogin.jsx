@@ -37,17 +37,17 @@ function CanteenAdminLogin() {
         required: true,
       },
     ],
-    [],
+    []
   );
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     let value = e.target.value;
 
     if (e.target.name === "email") {
       value = value.toLowerCase();
     }
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [e.target.name]: value,
     }));
@@ -78,13 +78,13 @@ function CanteenAdminLogin() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     toast.promise(handleLoginProcess(), {
       loading: "Signing in...",
       success: "Login successful",
-      error: (error) =>
+      error: error =>
         error?.response?.data?.message ||
         error?.message ||
         "Login failed. Please check your credentials.",
@@ -98,14 +98,12 @@ function CanteenAdminLogin() {
       </Helmet>
 
       <div className="min-h-screen bg-white dark:bg-[#121314] font-sans text-[#1E1F21] dark:text-zinc-100 relative flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-colors duration-300 overflow-hidden">
-        {/* Ambient Background Glow Accents */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#167CC2]/10 dark:bg-[#167CC2]/15 rounded-full blur-3xl" />
           <div className="absolute top-1/3 -left-40 w-96 h-96 bg-[#D2F535]/20 dark:bg-[#D2F535]/10 rounded-full blur-3xl" />
         </div>
 
         <div className="relative w-full max-w-md space-y-6 text-center z-10">
-          {/* Header Branding */}
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1E1F21] dark:text-white tracking-tight">
               EduAdmin SaaS
@@ -114,8 +112,6 @@ function CanteenAdminLogin() {
               Canteen Portal
             </p>
           </div>
-
-          {/* Form Card Container */}
           <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-6 sm:p-8 shadow-xs border border-zinc-100 dark:border-zinc-800 transition-all duration-300 text-left">
             <Form
               title="Staff Login"
@@ -130,7 +126,6 @@ function CanteenAdminLogin() {
             />
           </div>
 
-          {/* Footer Security Note */}
           <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
             Secure Institutional Access • Requires Authorized Credentials
           </p>

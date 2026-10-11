@@ -5,7 +5,6 @@ import {
   markAllNotificationsAsRead,
 } from "../routes/notification.routes";
 
-// Fetch Notifications
 export const fetchNotifications = createAsyncThunk(
   "notification/fetchNotifications",
   async (_, { rejectWithValue }) => {
@@ -13,14 +12,11 @@ export const fetchNotifications = createAsyncThunk(
       const response = await getNotifications();
       return Array.isArray(response.data) ? response.data : response || [];
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to fetch notifications",
-      );
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch notifications");
     }
-  },
+  }
 );
 
-// Mark Single Notification as Read
 export const readNotification = createAsyncThunk(
   "notification/readNotification",
   async (notificationId, { rejectWithValue }) => {
@@ -29,13 +25,12 @@ export const readNotification = createAsyncThunk(
       return notificationId;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to mark notification as read",
+        error.response?.data?.message || "Failed to mark notification as read"
       );
     }
-  },
+  }
 );
 
-// Mark All Notifications as Read
 export const readAllNotifications = createAsyncThunk(
   "notification/readAllNotifications",
   async (_, { rejectWithValue }) => {
@@ -44,11 +39,10 @@ export const readAllNotifications = createAsyncThunk(
       return true;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to mark all notifications as read",
+        error.response?.data?.message || "Failed to mark all notifications as read"
       );
     }
-  },
+  }
 );
 
 const initialState = {
@@ -62,44 +56,39 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     addNotification: (state, action) => {
-      const exists = state.items.some(
-        (item) => item._id === action.payload._id,
-      );
+      const exists = state.items.some(item => item._id === action.payload._id);
       if (!exists) {
         state.items.unshift(action.payload);
       }
     },
     markNotificationReadLocally: (state, action) => {
-      const notification = state.items.find(
-        (item) => item._id === action.payload,
-      );
+      const notification = state.items.find(item => item._id === action.payload);
       if (notification) {
         notification.isRead = true;
         notification.readAt = new Date().toISOString();
       }
     },
-    clearNotificationError: (state) => {
+    clearNotificationError: state => {
       state.error = null;
     },
-    resetNotifications: (state) => {
+    resetNotifications: state => {
       state.items = [];
       state.loading = false;
       state.error = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      // Fetch
-      .addCase(fetchNotifications.pending, (state) => {
+      .addCase(fetchNotifications.pending, state => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
         const unique = new Map();
-        action.payload.forEach((item) => unique.set(item._id, item));
+        action.payload.forEach(item => unique.set(item._id, item));
         state.items = [...unique.values()].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
       })
       .addCase(fetchNotifications.rejected, (state, action) => {
@@ -107,19 +96,17 @@ const notificationSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Single Read
       .addCase(readNotification.fulfilled, (state, action) => {
-        const item = state.items.find((n) => n._id === action.payload);
+        const item = state.items.find(n => n._id === action.payload);
         if (item) {
           item.isRead = true;
           item.readAt = new Date().toISOString();
         }
       })
 
-      // Read All
-      .addCase(readAllNotifications.fulfilled, (state) => {
+      .addCase(readAllNotifications.fulfilled, state => {
         const now = new Date().toISOString();
-        state.items.forEach((item) => {
+        state.items.forEach(item => {
           item.isRead = true;
           item.readAt = now;
         });

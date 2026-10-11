@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { toast } from "sonner";
@@ -30,13 +30,11 @@ function RegisterCanteenAdmin({ user }) {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  // Extract user details & status
   const currentUser = user?.data?.user;
   const adminStatus = currentUser?.status || "inactive";
   const isInactive = adminStatus.toLowerCase() === "inactive";
   const canteenAdminCount = currentUser?.canteenAdminCount || 0;
 
-  // Password requirement validator
   const getPasswordRequirements = pwd => [
     { label: "8+ characters", met: pwd.length >= 8 },
     { label: "Uppercase letter", met: /[A-Z]/.test(pwd) },
@@ -59,7 +57,6 @@ function RegisterCanteenAdmin({ user }) {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    // Guard rule: Limit registration for inactive accounts
     if (isInactive && canteenAdminCount >= 2) {
       toast.error(
         "Inactive account limit reached. Inactive admins can register up to 2 canteen admins."
@@ -104,7 +101,6 @@ function RegisterCanteenAdmin({ user }) {
       </Helmet>
 
       <div className="w-full min-h-auto space-y-6 font-sans text-[#1E1F21] dark:text-zinc-100 transition-colors duration-200">
-        {/* Navigation & Header */}
         <div className="w-full space-y-3 pb-4 border-b border-zinc-200 dark:border-zinc-800">
           <button
             type="button"
@@ -125,7 +121,6 @@ function RegisterCanteenAdmin({ user }) {
               </p>
             </div>
 
-            {/* Admin Status Pill */}
             <div className="self-start sm:self-auto shrink-0">
               {isInactive ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold bg-[#B2B0FF] text-[#1E1F21]">
@@ -141,8 +136,6 @@ function RegisterCanteenAdmin({ user }) {
             </div>
           </div>
         </div>
-
-        {/* Account Restriction Notice */}
         {isInactive && showNotice && (
           <div className="w-full flex items-start justify-between gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-900 dark:text-amber-300 text-xs font-medium">
             <div className="flex items-start gap-2.5">
@@ -169,15 +162,11 @@ function RegisterCanteenAdmin({ user }) {
             </button>
           </div>
         )}
-
-        {/* Registration Form Card - Full Width */}
         <form
           onSubmit={handleSubmit}
           className="w-full bg-white dark:bg-[#1E1F21] border border-zinc-100 dark:border-zinc-800 rounded-[28px] p-6 sm:p-8 shadow-xs space-y-6 transition-colors duration-200"
         >
-          {/* Inputs Container */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Email Input */}
             <div className="space-y-2">
               <label className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
                 Canteen Admin Email
@@ -198,8 +187,6 @@ function RegisterCanteenAdmin({ user }) {
                 />
               </div>
             </div>
-
-            {/* Password Input */}
             <div className="space-y-2">
               <label className="text-[11px] font-extrabold uppercase tracking-wider text-zinc-400">
                 Account Password
@@ -230,7 +217,6 @@ function RegisterCanteenAdmin({ user }) {
             </div>
           </div>
 
-          {/* Dynamic Security Requirements List */}
           <div className="pt-2">
             <p className="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider mb-3">
               Password Security Checklist
@@ -255,8 +241,6 @@ function RegisterCanteenAdmin({ user }) {
               ))}
             </div>
           </div>
-
-          {/* Form Actions */}
           <div className="pt-4 flex flex-col sm:flex-row gap-3">
             <button
               type="submit"
@@ -291,5 +275,4 @@ function RegisterCanteenAdmin({ user }) {
     </>
   );
 }
-
 export default RegisterCanteenAdmin;

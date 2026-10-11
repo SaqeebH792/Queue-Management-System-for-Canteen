@@ -25,21 +25,18 @@ function Studentsignup({ user }) {
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Derive admin account status directly from props
   const currentUser = user?.data?.user;
   const adminStatus = currentUser?.status || "inactive";
   const isAdminActive = adminStatus.toLowerCase() === "active";
   const [showDismissibleAlert, setShowDismissibleAlert] = useState(true);
 
-  // Data Preview & Pagination States
   const [parsedData, setParsedData] = useState([]);
-  const [activeTab, setActiveTab] = useState("all"); // 'all' | 'errors' | 'valid'
+  const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 6;
 
   const fileInputRef = useRef(null);
 
-  // File Processing & Validation Handler
   const processFile = selectedFile => {
     if (!selectedFile) return;
 
@@ -176,7 +173,6 @@ function Studentsignup({ user }) {
     document.body.removeChild(link);
   };
 
-  // Filter & Pagination Calculations
   const errorRows = parsedData.filter(r => r.status === "Invalid");
   const validRows = parsedData.filter(r => r.status === "Valid");
 
@@ -197,7 +193,6 @@ function Studentsignup({ user }) {
 
       <div className="min-h-screen font-sans text-[#1E1F21] dark:text-zinc-100 transition-colors duration-200">
         <div className="max-w-7xl mx-auto space-y-6">
-          {/* Header Section */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
@@ -232,7 +227,6 @@ function Studentsignup({ user }) {
             </button>
           </div>
 
-          {/* Dismissible Limit Alert */}
           {!isAdminActive && showDismissibleAlert && (
             <div className="flex items-center justify-between p-4 bg-[#B2B0FF]/10 border border-[#B2B0FF]/30 rounded-3xl text-[#1E1F21] dark:text-zinc-100 text-xs font-bold shadow-xs">
               <div className="flex items-center gap-2.5">
@@ -253,16 +247,12 @@ function Studentsignup({ user }) {
             </div>
           )}
 
-          {/* Layout Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* File Selection Side Card */}
             <div className="lg:col-span-4 space-y-4">
               <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-6 shadow-xs space-y-4">
                 <h2 className="text-sm font-extrabold text-[#1E1F21] dark:text-white uppercase tracking-wider">
                   Upload Document
                 </h2>
-
-                {/* Drag-and-Drop Container */}
                 <div
                   onDragOver={e => {
                     e.preventDefault();
@@ -303,8 +293,6 @@ function Studentsignup({ user }) {
                     Browse Files
                   </button>
                 </div>
-
-                {/* Parsed File Details Badge */}
                 {file && (
                   <div className="p-4 bg-[#F3F4F6] dark:bg-zinc-800/60 rounded-2xl space-y-3">
                     <div className="flex items-center justify-between">
@@ -338,8 +326,6 @@ function Studentsignup({ user }) {
                   </div>
                 )}
               </div>
-
-              {/* Checklist Guide */}
               <div className="bg-white dark:bg-[#1E1F21] rounded-[28px] p-6 shadow-xs space-y-3">
                 <h3 className="font-extrabold text-[#1E1F21] dark:text-white text-xs uppercase tracking-wider">
                   Format Checklist
@@ -360,10 +346,7 @@ function Studentsignup({ user }) {
                 </ul>
               </div>
             </div>
-
-            {/* Interactive Data Grid Section */}
             <div className="lg:col-span-8 bg-white dark:bg-[#1E1F21] rounded-[28px] p-4 sm:p-6 shadow-xs space-y-4">
-              {/* Table Header Bar */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-100 dark:border-zinc-800">
                 <div>
                   <h2 className="text-base font-extrabold text-[#1E1F21] dark:text-white">
@@ -397,8 +380,6 @@ function Studentsignup({ user }) {
                   </button>
                 </div>
               </div>
-
-              {/* Filter Tabs */}
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -446,10 +427,8 @@ function Studentsignup({ user }) {
                   Valid ({validRows.length})
                 </button>
               </div>
-
-              {/* Structured Table Container */}
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[600px]">
+                <table className="w-full text-left border-collapse min-w-150">
                   <thead>
                     <tr className="border-b border-zinc-100 dark:border-zinc-800 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wider">
                       <th className="py-3 px-3 w-8">#</th>
@@ -558,8 +537,6 @@ function Studentsignup({ user }) {
                   </tbody>
                 </table>
               </div>
-
-              {/* Pagination Controls */}
               <div className="flex flex-col xs:flex-row items-center justify-between gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                 <span className="text-xs font-bold text-zinc-400 order-2 xs:order-1">
                   Showing {filteredData.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0} -{" "}
@@ -598,5 +575,4 @@ function Studentsignup({ user }) {
     </>
   );
 }
-
 export default Studentsignup;

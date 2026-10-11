@@ -6,7 +6,7 @@ import { Order } from "../models/order.model.js";
 import { UploadedStudent } from "../models/uploadStudents.model.js";
 import { Otp } from "../models/otp.model.js";
 import { calculateOrder } from "../utils/calculateOrder.js";
-import { CanteenAdmin } from "../models/CanteenAdmin.model.js";
+import { CanteenAdmin } from "../models/canteenAdmin.model.js";
 import { OrderNotification } from "../models/orderNotification.model.js";
 
 // Utils
@@ -450,9 +450,7 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new apiError(400, "Canteen admin is required");
   }
 
-  // ---------------------------------------------
   // Validate pickup time
-  // ---------------------------------------------
 
   if (!pickupTime) {
     throw new apiError(400, "Pickup time is required!");
@@ -468,9 +466,7 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new apiError(400, "Pickup time must be in the future");
   }
 
-  // ---------------------------------------------
   // Maximum pending orders
-  // ---------------------------------------------
 
   const pendingOrders = await Order.countDocuments({
     studentId: req.user._id,
@@ -484,9 +480,7 @@ const createOrder = asyncHandler(async (req, res) => {
     );
   }
 
-  // ---------------------------------------------
   // Maximum daily orders
-  // ---------------------------------------------
 
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
@@ -506,15 +500,11 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new apiError(403, "You have reached the maximum limit of 10 orders for today.");
   }
 
-  // ---------------------------------------------
   // Calculate order
-  // ---------------------------------------------
 
   const result = await calculateOrder(items, universityId);
 
-  // ---------------------------------------------
   // Create order
-  // ---------------------------------------------
 
   const order = await Order.create({
     studentId: req.user._id,
@@ -534,9 +524,7 @@ const createOrder = asyncHandler(async (req, res) => {
     paymentStatus: "Pending",
   });
 
-  // ---------------------------------------------
   // Notify canteen admin
-  // ---------------------------------------------
 
   try {
     const canteenAdmin = await CanteenAdmin.findById(canteenAdminId);

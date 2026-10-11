@@ -1,7 +1,6 @@
 export function HeroSkeleton() {
   return (
     <section className="max-w-7xl mx-auto px-6 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center animate-pulse">
-      {/* Text Content Skeleton */}
       <div className="space-y-6">
         <div className="space-y-3">
           <div className="h-12 bg-slate-200 dark:bg-[#2B2D30] rounded-2xl w-4/5" />
@@ -18,7 +17,6 @@ export function HeroSkeleton() {
         </div>
       </div>
 
-      {/* Hero Image Skeleton */}
       <div className="relative">
         <div className="w-full h-95 sm:h-115 bg-slate-200 dark:bg-[#2B2D30] rounded-3xl" />
       </div>

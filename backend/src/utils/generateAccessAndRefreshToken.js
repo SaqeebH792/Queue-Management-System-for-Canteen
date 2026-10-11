@@ -17,7 +17,6 @@ const generateAccessAndRefreshToken = async user => {
     };
   } catch (error) {
     console.log(error);
-
     throw new apiError(500, "Something went wrong while generating tokens");
   }
 };

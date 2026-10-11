@@ -43,7 +43,6 @@ const superAdminSchema = new mongoose.Schema(
   }
 );
 
-// Hash password before saving
 superAdminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return;

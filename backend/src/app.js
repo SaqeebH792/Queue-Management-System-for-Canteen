@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:5173", "http://192.168.18.119:5173"];
+const allowedOrigins = ["http://localhost:5173"];
 app.use(
   cors({
     origin: allowedOrigins,
@@ -43,4 +43,6 @@ app.use("/api/users", canteenRouter);
 import notificationRouter from "./routes/notification.routes.js";
 app.use("/api/users", notificationRouter);
 
+import reviewRoutes from "./routes/review.routes.js";
+app.use("/api/users/reviews", reviewRoutes);
 export { app };

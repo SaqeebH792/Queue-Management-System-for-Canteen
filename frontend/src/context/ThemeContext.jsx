@@ -8,7 +8,6 @@ export function ThemeProvider({ children }) {
     if (savedTheme) {
       return savedTheme === "dark";
     }
-    // Fall back to system preference if no saved choice
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
@@ -24,12 +23,10 @@ export function ThemeProvider({ children }) {
     }
   }, [darkMode]);
 
-  const toggleTheme = () => setDarkMode((prev) => !prev);
+  const toggleTheme = () => setDarkMode(prev => !prev);
 
   return (
-    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>{children}</ThemeContext.Provider>
   );
 }
 

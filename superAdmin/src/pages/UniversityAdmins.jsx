@@ -1,24 +1,242 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Filter, Loader2, Search, ShieldCheck, UserX, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Loader2,
+  Search,
+  ShieldCheck,
+  UserX,
+  X,
+} from "lucide-react";
 import { deactivateUniversityAdmin, getUniversityAdmins } from "../features/universityAdminApi";
 import PageHeader from "../components/PageHeader";
 import StatusPill from "../components/StatusPill";
 import EmptyState from "../components/EmptyState";
 
 const UniversityAdmins = () => {
-  const [admins,setAdmins]=useState([]); const [pagination,setPagination]=useState(null); const [loading,setLoading]=useState(true); const [error,setError]=useState("");
-  const [page,setPage]=useState(1); const [status,setStatus]=useState(""); const [search,setSearch]=useState(""); const [query,setQuery]=useState(""); const [confirm,setConfirm]=useState(null); const [saving,setSaving]=useState(false);
-  const fetchAdmins=async()=>{try{setLoading(true);setError("");const r=await getUniversityAdmins({page,limit:10,search:query,status});setAdmins(r.data.admins||[]);setPagination(r.data.pagination)}catch(e){setError(e.response?.data?.message||"Failed to load university admins")}finally{setLoading(false)}};
-  useEffect(()=>{fetchAdmins()},[page,status,query]);
-  const submit=(e)=>{e.preventDefault();setPage(1);setQuery(search.trim())};
-  const deactivate=async()=>{if(!confirm)return;try{setSaving(true);await deactivateUniversityAdmin(confirm._id);setConfirm(null);await fetchAdmins()}catch(e){setError(e.response?.data?.message||"Unable to deactivate administrator")}finally{setSaving(false)}};
+  const [admins, setAdmins] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [status, setStatus] = useState("");
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [confirm, setConfirm] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const fetchAdmins = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const r = await getUniversityAdmins({ page, limit: 10, search: query, status });
+      setAdmins(r.data.admins || []);
+      setPagination(r.data.pagination);
+    } catch (e) {
+      setError(e.response?.data?.message || "Failed to load university admins");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchAdmins();
+  }, [page, status, query]);
+  const submit = e => {
+    e.preventDefault();
+    setPage(1);
+    setQuery(search.trim());
+  };
+  const deactivate = async () => {
+    if (!confirm) return;
+    try {
+      setSaving(true);
+      await deactivateUniversityAdmin(confirm._id);
+      setConfirm(null);
+      await fetchAdmins();
+    } catch (e) {
+      setError(e.response?.data?.message || "Unable to deactivate administrator");
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  return <div className="fade-in"><PageHeader title="University Admins" description="Monitor administrator accounts and their university associations." action={<div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400"><ShieldCheck size={15} className="text-violet-400"/> {pagination?.totalAdmins ?? 0} admins</div>}/>
-    <div className="panel mb-4 p-4"><div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"><form onSubmit={submit} className="flex flex-1 gap-2"><div className="relative max-w-lg flex-1"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"/><input className="input-dark pl-9" placeholder="Search admin or university..." value={search} onChange={e=>setSearch(e.target.value)}/></div><button className="btn-primary">Search</button></form><div className="flex items-center gap-2"><Filter size={15} className="text-slate-600"/><select className="select-dark w-[150px]" value={status} onChange={e=>{setPage(1);setStatus(e.target.value)}}><option value="">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div></div>
-    {error&&<div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">{error}</div>}
-    <div className="panel overflow-hidden"><div className="overflow-x-auto"><table className="w-full min-w-[850px] text-left"><thead><tr className="bg-white/[.02] text-[10px] uppercase tracking-[.08em] text-slate-600"><th className="px-5 py-3 font-semibold">Administrator</th><th className="px-5 py-3 font-semibold">University</th><th className="px-5 py-3 font-semibold">Status</th><th className="px-5 py-3 font-semibold">Created</th><th className="px-5 py-3 text-right font-semibold">Action</th></tr></thead><tbody>{loading?<tr><td colSpan="5"><div className="flex h-64 items-center justify-center"><Loader2 className="animate-spin text-blue-400"/></div></td></tr>:admins.length===0?<tr><td colSpan="5"><EmptyState message="No university admins match your filters"/></td></tr>:admins.map(a=><tr key={a._id} className="table-row text-sm"><td className="px-5 py-4"><div className="flex items-center gap-3"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-xs font-bold text-violet-400">{a.fullName?.slice(0,1)?.toUpperCase()||"A"}</div><div><p className="font-semibold text-slate-200">{a.fullName||"—"}</p><p className="mt-0.5 text-xs text-slate-600">{a.email||"—"}</p></div></div></td><td className="px-5 py-4"><p className="font-medium text-slate-300">{a.university?.name||"—"}</p><p className="mt-0.5 text-xs text-slate-600">{a.university?.email||"—"}</p></td><td className="px-5 py-4"><StatusPill status={a.status}/></td><td className="px-5 py-4 text-xs text-slate-500">{a.createdAt?new Date(a.createdAt).toLocaleDateString():"—"}</td><td className="px-5 py-4 text-right">{a.status==='active'&&<button onClick={()=>setConfirm(a)} className="btn-danger"><UserX size={14} className="mr-1 inline"/>Deactivate</button>}</td></tr>)}</tbody></table></div><div className="flex items-center justify-between border-t border-white/[.06] px-5 py-3"><p className="text-xs text-slate-600">Page {pagination?.currentPage||1} of {pagination?.totalPages||1}</p><div className="flex gap-2"><button disabled={!pagination?.hasPrevPage} onClick={()=>setPage(p=>p-1)} className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:opacity-30"><ChevronLeft size={14}/>Prev</button><button disabled={!pagination?.hasNextPage} onClick={()=>setPage(p=>p+1)} className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:opacity-30">Next<ChevronRight size={14}/></button></div></div></div>
-    {confirm&&<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"><div className="w-full max-w-md rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl"><div className="flex items-center justify-between border-b border-white/[.06] px-5 py-4"><div><p className="text-sm font-semibold text-white">Deactivate administrator?</p><p className="mt-0.5 text-xs text-slate-500">This will mark the account inactive.</p></div><button onClick={()=>setConfirm(null)} className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-white"><X size={18}/></button></div><div className="p-5"><div className="rounded-lg bg-white/[.025] p-4"><p className="font-medium text-slate-200">{confirm.fullName}</p><p className="mt-1 text-xs text-slate-500">{confirm.email}</p><p className="mt-3 text-xs text-slate-500">{confirm.university?.name}</p></div><div className="mt-5 flex justify-end gap-2"><button onClick={()=>setConfirm(null)} className="btn-secondary">Cancel</button><button disabled={saving} onClick={deactivate} className="btn-danger">{saving?'Deactivating...':'Deactivate account'}</button></div></div></div></div>}
-  </div>;
+  return (
+    <div className="fade-in">
+      <PageHeader
+        title="University Admins"
+        description="Monitor administrator accounts and their university associations."
+        action={
+          <div className="flex items-center gap-2 rounded-lg border border-white/[.07] bg-white/[.025] px-3 py-2 text-xs text-slate-400">
+            <ShieldCheck size={15} className="text-violet-400" /> {pagination?.totalAdmins ?? 0}{" "}
+            admins
+          </div>
+        }
+      />
+      <div className="panel mb-4 p-4">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+          <form onSubmit={submit} className="flex flex-1 gap-2">
+            <div className="relative max-w-lg flex-1">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"
+              />
+              <input
+                className="input-dark pl-9"
+                placeholder="Search admin or university..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="btn-primary">Search</button>
+          </form>
+          <div className="flex items-center gap-2">
+            <Filter size={15} className="text-slate-600" />
+            <select
+              className="select-dark w-[150px]"
+              value={status}
+              onChange={e => {
+                setPage(1);
+                setStatus(e.target.value);
+              }}
+            >
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      {error && (
+        <div className="mb-4 rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+          {error}
+        </div>
+      )}
+      <div className="panel overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[850px] text-left">
+            <thead>
+              <tr className="bg-white/[.02] text-[10px] uppercase tracking-[.08em] text-slate-600">
+                <th className="px-5 py-3 font-semibold">Administrator</th>
+                <th className="px-5 py-3 font-semibold">University</th>
+                <th className="px-5 py-3 font-semibold">Status</th>
+                <th className="px-5 py-3 font-semibold">Created</th>
+                <th className="px-5 py-3 text-right font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5">
+                    <div className="flex h-64 items-center justify-center">
+                      <Loader2 className="animate-spin text-blue-400" />
+                    </div>
+                  </td>
+                </tr>
+              ) : admins.length === 0 ? (
+                <tr>
+                  <td colSpan="5">
+                    <EmptyState message="No university admins match your filters" />
+                  </td>
+                </tr>
+              ) : (
+                admins.map(a => (
+                  <tr key={a._id} className="table-row text-sm">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-xs font-bold text-violet-400">
+                          {a.fullName?.slice(0, 1)?.toUpperCase() || "A"}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-200">{a.fullName || "—"}</p>
+                          <p className="mt-0.5 text-xs text-slate-600">{a.email || "—"}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="font-medium text-slate-300">{a.university?.name || "—"}</p>
+                      <p className="mt-0.5 text-xs text-slate-600">{a.university?.email || "—"}</p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <StatusPill status={a.status} />
+                    </td>
+                    <td className="px-5 py-4 text-xs text-slate-500">
+                      {a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      {a.status === "active" && (
+                        <button onClick={() => setConfirm(a)} className="btn-danger">
+                          <UserX size={14} className="mr-1 inline" />
+                          Deactivate
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex items-center justify-between border-t border-white/[.06] px-5 py-3">
+          <p className="text-xs text-slate-600">
+            Page {pagination?.currentPage || 1} of {pagination?.totalPages || 1}
+          </p>
+          <div className="flex gap-2">
+            <button
+              disabled={!pagination?.hasPrevPage}
+              onClick={() => setPage(p => p - 1)}
+              className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:opacity-30"
+            >
+              <ChevronLeft size={14} />
+              Prev
+            </button>
+            <button
+              disabled={!pagination?.hasNextPage}
+              onClick={() => setPage(p => p + 1)}
+              className="btn-secondary flex h-8 items-center gap-1 px-2.5 text-xs disabled:opacity-30"
+            >
+              Next
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+      {confirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-xl border border-white/[.08] bg-[#171d23] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/[.06] px-5 py-4">
+              <div>
+                <p className="text-sm font-semibold text-white">Deactivate administrator?</p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  This will mark the account inactive.
+                </p>
+              </div>
+              <button
+                onClick={() => setConfirm(null)}
+                className="rounded-md p-1.5 text-slate-500 hover:bg-white/5 hover:text-white"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-5">
+              <div className="rounded-lg bg-white/[.025] p-4">
+                <p className="font-medium text-slate-200">{confirm.fullName}</p>
+                <p className="mt-1 text-xs text-slate-500">{confirm.email}</p>
+                <p className="mt-3 text-xs text-slate-500">{confirm.university?.name}</p>
+              </div>
+              <div className="mt-5 flex justify-end gap-2">
+                <button onClick={() => setConfirm(null)} className="btn-secondary">
+                  Cancel
+                </button>
+                <button disabled={saving} onClick={deactivate} className="btn-danger">
+                  {saving ? "Deactivating..." : "Deactivate account"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 export default UniversityAdmins;

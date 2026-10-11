@@ -1,22 +1,16 @@
-import React, { useState } from "react";
-import {
-  SlidersHorizontal,
-  Calendar,
-  History,
-  ArrowUpDown,
-} from "lucide-react";
+import { useState } from "react";
+import { Calendar, History, ArrowUpDown } from "lucide-react";
 
 export default function RequestsHistory({ history = [] }) {
   const [sortOrder, setSortOrder] = useState("desc");
 
-  // Toggle sort order between newest and oldest first
   const sortedHistory = [...history].sort((a, b) => {
     const dateA = new Date(a.createdAt || 0);
     const dateB = new Date(b.createdAt || 0);
     return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
   });
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = status => {
     switch (status?.toLowerCase()) {
       case "pending":
       case "in_review":
@@ -52,7 +46,6 @@ export default function RequestsHistory({ history = [] }) {
 
   return (
     <div className="bg-white dark:bg-[#1E1F21] border border-slate-200 dark:border-zinc-800 rounded-3xl p-6 shadow-xl transition-colors duration-200">
-      {/* Panel Header */}
       <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100 dark:border-zinc-800/80">
         <div>
           <h2 className="text-base font-bold text-slate-900 dark:text-white">
@@ -65,9 +58,7 @@ export default function RequestsHistory({ history = [] }) {
 
         <button
           type="button"
-          onClick={() =>
-            setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"))
-          }
+          onClick={() => setSortOrder(prev => (prev === "desc" ? "asc" : "desc"))}
           title={`Sort ${sortOrder === "desc" ? "Oldest First" : "Newest First"}`}
           className="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 transition-colors cursor-pointer"
         >
@@ -75,7 +66,6 @@ export default function RequestsHistory({ history = [] }) {
         </button>
       </div>
 
-      {/* Requests List */}
       <div className="space-y-3">
         {sortedHistory.length === 0 ? (
           <div className="text-center py-10 px-4 border border-dashed border-slate-200 dark:border-zinc-800 rounded-2xl bg-slate-50/50 dark:bg-zinc-900/30">

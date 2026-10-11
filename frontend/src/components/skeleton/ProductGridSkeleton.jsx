@@ -1,10 +1,6 @@
-// components/skeleton/ProductGridSkeleton.jsx
-import React from "react";
-
 export function ProductGridSkeleton() {
   return (
     <div className="space-y-8 animate-pulse">
-      {/* Products Grid Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[...Array(6)].map((_, idx) => (
           <div
@@ -24,7 +20,6 @@ export function ProductGridSkeleton() {
         ))}
       </div>
 
-      {/* Pagination Skeleton */}
       <div className="flex items-center justify-between bg-[#FBECE5] dark:bg-[#1E1F21] p-4 rounded-2xl border border-[#E0BBAA] dark:border-[#2E3035]">
         <div className="h-8 w-24 bg-[#EBC8B8] dark:bg-[#2A2D32] rounded-xl" />
         <div className="h-7 w-20 bg-[#EBC8B8] dark:bg-[#2A2D32] rounded-xl" />

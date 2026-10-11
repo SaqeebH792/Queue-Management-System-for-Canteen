@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { verifyOtp } from "../../routes/university.routes";
 
-// Utility to mask email (e.g. exa********2@domain.com)
-const maskEmail = (emailStr) => {
+const maskEmail = emailStr => {
   if (!emailStr || !emailStr.includes("@")) return emailStr;
 
   const [localPart, domainPart] = emailStr.split("@");
 
-  // Mask Local Part
   let maskedLocal = localPart;
   if (localPart.length > 3) {
     const visiblePrefix = localPart.slice(0, 3);
@@ -41,7 +39,6 @@ function VerifyAdmin() {
 
   const [loading, setLoading] = useState(false);
 
-  // Retrieve email from sessionStorage
   const email = sessionStorage.getItem("verifyEmail") || "";
 
   useEffect(() => {
@@ -51,24 +48,24 @@ function VerifyAdmin() {
     }
   }, [navigate, email]);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
 
     if (name === "otp") {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         otp: value.replace(/\D/g, "").slice(0, 6),
       }));
       return;
     }
 
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
 
     if (!email) return;
@@ -169,11 +166,7 @@ function VerifyAdmin() {
 
           <button
             type="submit"
-            disabled={
-              loading ||
-              formData.otp.length !== 6 ||
-              formData.password.length < 8
-            }
+            disabled={loading || formData.otp.length !== 6 || formData.password.length < 8}
             className="w-full mt-2 py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/25 transition-all duration-300 disabled:opacity-40 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? "Verifying..." : "Verify & Submit"}
@@ -183,5 +176,4 @@ function VerifyAdmin() {
     </div>
   );
 }
-
 export default VerifyAdmin;
